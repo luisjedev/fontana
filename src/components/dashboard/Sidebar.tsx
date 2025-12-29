@@ -2,11 +2,13 @@ import { Delete, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-type TableStatus = "pending" | "waiting" | "served";
+type TableStatus = "pending" | "waiting" | "code3";
+type SidebarMode = "mesa" | "cola";
 
 export function Sidebar() {
 	const [inputValue, setInputValue] = useState("");
 	const [selectedStatus, setSelectedStatus] = useState<TableStatus>("pending");
+	const [mode, setMode] = useState<SidebarMode>("mesa");
 
 	const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -28,7 +30,8 @@ export function Sidebar() {
 
 	const handleConfirm = () => {
 		console.log("CONFIRMAR:", {
-			mesa: inputValue,
+			modo: mode,
+			qty: inputValue,
 			estado: selectedStatus,
 		});
 		setInputValue("");
@@ -40,13 +43,25 @@ export function Sidebar() {
 			<div className="flex bg-slate-50 p-1 rounded-xl mb-6">
 				<button
 					type="button"
-					className="flex-1 py-2.5 text-sm font-bold bg-white shadow-sm rounded-lg text-slate-900 border border-slate-200/50"
+					onClick={() => setMode("mesa")}
+					className={cn(
+						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all",
+						mode === "mesa"
+							? "bg-white shadow-sm text-slate-900 border border-slate-200/50"
+							: "text-slate-500 hover:text-slate-700",
+					)}
 				>
 					MESA
 				</button>
 				<button
 					type="button"
-					className="flex-1 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700"
+					onClick={() => setMode("cola")}
+					className={cn(
+						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all",
+						mode === "cola"
+							? "bg-white shadow-sm text-slate-900 border border-slate-200/50"
+							: "text-slate-500 hover:text-slate-700",
+					)}
 				>
 					COLA
 				</button>
@@ -74,12 +89,12 @@ export function Sidebar() {
 			</div>
 
 			{/* Status Filters */}
-			<div className="flex gap-2 mb-8">
+			<div className={cn("flex gap-2 mb-8", mode === "cola" && "invisible")}>
 				<button
 					type="button"
 					onClick={() => setSelectedStatus("pending")}
 					className={cn(
-						"flex-1 py-2 px-1 text-xs font-semibold rounded-lg transition-all",
+						"flex-1 py-4 uppercase px-1 text-xs font-semibold rounded-lg transition-all",
 						selectedStatus === "pending"
 							? "bg-blue-500 text-white shadow-blue-500/20 shadow-lg border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
@@ -91,9 +106,9 @@ export function Sidebar() {
 					type="button"
 					onClick={() => setSelectedStatus("waiting")}
 					className={cn(
-						"flex-1 py-2 px-1 text-xs font-semibold rounded-lg transition-all",
+						"flex-1 py-2 uppercase px-1 text-xs font-semibold rounded-lg transition-all",
 						selectedStatus === "waiting"
-							? "bg-orange-500 text-white shadow-orange-500/20 shadow-lg border-transparent"
+							? "bg-yellow-400 text-slate-900 shadow-yellow-500/20 shadow-lg border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
@@ -101,15 +116,15 @@ export function Sidebar() {
 				</button>
 				<button
 					type="button"
-					onClick={() => setSelectedStatus("served")}
+					onClick={() => setSelectedStatus("code3")}
 					className={cn(
-						"flex-1 py-2 px-1 text-xs font-semibold rounded-lg transition-all",
-						selectedStatus === "served"
-							? "bg-emerald-500 text-white shadow-emerald-500/20 shadow-lg border-transparent"
+						"flex-1 py-2 px-1 uppercase text-xs font-semibold rounded-lg transition-all",
+						selectedStatus === "code3"
+							? "bg-red-500 text-white shadow-red-500/20 shadow-lg border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
-					Atendida
+					Codigo 3
 				</button>
 			</div>
 
@@ -142,7 +157,7 @@ export function Sidebar() {
 				<button
 					type="button"
 					onClick={handleConfirm}
-					className="w-full py-4 bg-slate-900 text-white text-sm font-bold tracking-wide rounded-2xl shadow-xl hover:bg-slate-800 active:scale-95 transition-all"
+					className="w-full py-6 bg-slate-900 text-white text-sm font-bold tracking-wide rounded-2xl shadow-xl hover:bg-slate-800 active:scale-95 transition-all"
 				>
 					CONFIRMAR
 				</button>

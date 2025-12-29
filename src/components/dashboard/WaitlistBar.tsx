@@ -1,34 +1,27 @@
-import { Hourglass } from "lucide-react";
-
 export function WaitlistBar() {
 	const waitlistItems = [
-		{ p: "4p", t: "2 min" },
-		{ p: "2p", t: "4 min" },
-		{ p: "3p", t: "6 min" },
-		{ p: "5p", t: "8 min" },
-		{ p: "2p", t: "10 min" },
+		{ p: "4P", t: "2 min" },
+		{ p: "2P", t: "4 min" },
+		{ p: "3P", t: "6 min" },
+		{ p: "5P", t: "8 min" },
+		{ p: "2P", t: "10 min" },
 	];
 
 	return (
-		<div className="flex items-center gap-6 mb-4 w-full border-b border-slate-400">
-			{/* Header Label */}
-			<div className="flex items-center gap-2 text-slate-400">
-				<Hourglass size={20} />
-				<span className="text-xs font-bold tracking-widest">EN COLA</span>
-			</div>
-
-			{/* Scrollable list */}
-			<div className="flex-1 flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+		<div className="flex items-center gap-8 mb-6 w-full border-b border-slate-400 pb-4 h-24">
+			<div className="flex-1 flex gap-6 overflow-x-auto pb-4 scrollbar-hide items-center h-full">
 				{waitlistItems.map((item, i) => (
 					<div
 						key={i}
-						className="shrink-0 flex items-center bg-white rounded-full px-4 py-3 shadow-sm border border-slate-100 min-w-[120px] justify-between"
+						className="shrink-0 flex items-center bg-white rounded-2xl px-6 py-4 shadow-md border border-slate-200 min-w-[160px] justify-between h-16"
 					>
-						<span className="font-bold text-slate-800 text-sm">{item.p}</span>
-						<span className="text-slate-500 text-xs font-medium ml-2">
+						<span className="font-bold text-slate-800 text-2xl p-2 bg-slate-100 rounded-full">
+							{item.p}
+						</span>
+						<span className="text-slate-500 text-lg font-semibold ml-4">
 							{item.t}
 						</span>
-						<span className="text-slate-300 ml-2">→</span>
+						<span className="text-slate-300 ml-4 scale-125">→</span>
 					</div>
 				))}
 			</div>

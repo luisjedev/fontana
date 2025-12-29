@@ -2,44 +2,28 @@ import { cn } from "@/lib/utils";
 
 interface TableCircleProps {
 	number: string;
-	status: "pending" | "waiting" | "occupied" | "free";
+	status: "pending" | "waiting" | "code3" | "free";
 	time?: string; // '2 min', 'Now', '15 min'
 	badge?: number; // Notification count
+	onClick?: () => void;
 }
 
-export function TableCircle({ number, status, time, badge }: TableCircleProps) {
-	// Styles based on status
-	const styles = {
-		pending: {
-			ring: "border-blue-500",
-			text: "text-slate-900",
-			footer: "text-slate-500",
-		},
-		waiting: {
-			ring: "border-orange-500",
-			text: "text-slate-900",
-			footer: "text-slate-500",
-		},
-		occupied: {
-			ring: "border-blue-500", // Assuming 'Now' ones are generic blue or specific
-			text: "text-slate-900",
-			footer: "text-slate-500",
-		},
-		free: {
-			ring: "border-emerald-500",
-			text: "text-slate-900",
-			footer: "text-emerald-500 font-bold",
-		},
-	};
-
+export function TableCircle({
+	number,
+	status,
+	time,
+	badge,
+	onClick,
+}: TableCircleProps) {
 	// The design has heavy rings.
 	// Using Tailwind borders.
 
 	let ringColor = "border-slate-200";
 	let footerColor = "text-slate-500";
 
-	if (status === "pending") ringColor = "border-blue-500"; // 01, 15
-	if (status === "waiting") ringColor = "border-orange-500"; // 02, 14
+	if (status === "pending") ringColor = "border-blue-500";
+	if (status === "waiting") ringColor = "border-yellow-400";
+	if (status === "code3") ringColor = "border-red-500";
 	if (status === "free") {
 		ringColor = "border-emerald-500";
 		footerColor = "text-emerald-500 font-bold";
@@ -51,7 +35,10 @@ export function TableCircle({ number, status, time, badge }: TableCircleProps) {
 	// 03, 08, 13 are Green.
 
 	return (
-		<div className="flex flex-col items-center gap-2">
+		<div
+			className="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95"
+			onClick={onClick}
+		>
 			<div className="relative">
 				{/* Ring */}
 				<div
