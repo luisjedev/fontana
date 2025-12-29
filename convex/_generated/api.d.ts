@@ -8,23 +8,13 @@
  * @module
  */
 
-import type * as facturas from "../facturas.js";
-import type * as gastos from "../gastos.js";
-import type * as ingresos from "../ingresos.js";
-import type * as proveedores from "../proveedores.js";
-
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
 
-declare const fullApi: ApiFromModules<{
-  facturas: typeof facturas;
-  gastos: typeof gastos;
-  ingresos: typeof ingresos;
-  proveedores: typeof proveedores;
-}>;
+declare const fullApi: ApiFromModules<{}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.
