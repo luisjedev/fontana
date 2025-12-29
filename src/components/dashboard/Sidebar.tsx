@@ -1,6 +1,8 @@
-import { Delete, X } from "lucide-react";
+import { useMutation } from "convex/react";
+import { X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { api } from "../../../convex/_generated/api";
 
 type TableStatus = "pending" | "waiting" | "code3";
 type SidebarMode = "mesa" | "cola";
@@ -9,6 +11,10 @@ export function Sidebar() {
 	const [inputValue, setInputValue] = useState("");
 	const [selectedStatus, setSelectedStatus] = useState<TableStatus>("pending");
 	const [mode, setMode] = useState<SidebarMode>("mesa");
+	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+	const createTable = useMutation(api.tables.create);
+	const addToWaitlist = useMutation(api.waitlist.add);
 
 	const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -28,17 +34,52 @@ export function Sidebar() {
 		setInputValue("");
 	};
 
-	const handleConfirm = () => {
-		console.log("CONFIRMAR:", {
-			modo: mode,
-			qty: inputValue,
-			estado: selectedStatus,
-		});
-		setInputValue("");
+	const handleConfirm = async () => {
+		if (!inputValue) return;
+
+		try {
+			if (mode === "mesa") {
+				await createTable({
+					tableNumber: inputValue,
+					status: selectedStatus,
+				});
+			} else {
+				// Cola
+				await addToWaitlist({
+					people: `${inputValue}p`,
+				});
+			}
+			setInputValue("");
+		} catch (error: any) {
+			// Catch duplicate error or others
+			// ConvexError data is in error.data or message usually
+			const message =
+				error.data || error.message || "Error al añadir. Intenta de nuevo.";
+			setErrorMsg(message);
+		}
 	};
 
 	return (
 		<div className="w-[320px] md:w-[380px] h-full flex flex-col p-6 bg-white border-r border-slate-100 shadow-sm relative z-20">
+			{/* Error Modal Overlay */}
+			{errorMsg && (
+				<div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 rounded-none animate-in fade-in duration-200">
+					<div className="bg-white rounded-2xl p-6 shadow-2xl w-full text-center">
+						<div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+							<X size={24} />
+						</div>
+						<h3 className="text-lg font-bold text-slate-800 mb-2">Error</h3>
+						<p className="text-slate-600 mb-6">{errorMsg}</p>
+						<button
+							onClick={() => setErrorMsg(null)}
+							className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors"
+						>
+							Entendido
+						</button>
+					</div>
+				</div>
+			)}
+
 			{/* Top Toggle */}
 			<div className="flex bg-slate-50 p-1 rounded-xl mb-6">
 				<button

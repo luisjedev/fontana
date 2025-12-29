@@ -6,6 +6,7 @@ interface TableCircleProps {
 	time?: string; // '2 min', 'Now', '15 min'
 	badge?: number; // Notification count
 	onClick?: () => void;
+	isWarning?: boolean;
 }
 
 export function TableCircle({
@@ -14,12 +15,14 @@ export function TableCircle({
 	time,
 	badge,
 	onClick,
+	isWarning,
 }: TableCircleProps) {
 	// The design has heavy rings.
 	// Using Tailwind borders.
 
 	let ringColor = "border-slate-200";
 	let footerColor = "text-slate-500";
+	if (isWarning) footerColor = "text-red-600 font-extrabold";
 
 	if (status === "pending") ringColor = "border-blue-500";
 	if (status === "waiting") ringColor = "border-yellow-400";
@@ -59,7 +62,7 @@ export function TableCircle({
 			</div>
 
 			{/* Footer Text */}
-			<span className={cn("text-xs font-medium", footerColor)}>
+			<span className={cn("text-lg font-medium", footerColor)}>
 				{time || (status === "free" && "")}
 			</span>
 		</div>

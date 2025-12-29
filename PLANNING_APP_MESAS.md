@@ -56,3 +56,26 @@ Diseñada para hostelería de alto ritmo que necesita:
 
 ---
 **Versión**: 1.0
+
+
+Funcionalidades:
+
+ORDENAMIENTO:
+
+Las mesas se ordenarán por los siguientes criterios:
+
+Estado de la mesa: 
+1. Pendiente
+2. Código 3
+3. Esperando
+
+Dentro de cada estado, se ordenarán por el tiempo de espera (las mesas más antiguas se mostrarán primero. Esto aplica también para las colas).
+
+INSERCIÓN DE DATOS:
+
+Mesas: número de mesa (único), estado, momento inicial(timeStamp, tanto en creación como en modificación, para saber cuanto tiempo lleva en su estado actual)
+
+Cola: Número de personas, momento inicial(timeStamp).
+
+
+
