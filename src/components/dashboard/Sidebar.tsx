@@ -76,7 +76,7 @@ export function Sidebar() {
 			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
-			<div className="flex bg-slate-50 p-1 rounded-xl mb-6">
+			<div className="flex bg-slate-50 p-1 rounded-xl mb-4">
 				<button
 					type="button"
 					onClick={() => setMode("mesa")}
@@ -93,7 +93,7 @@ export function Sidebar() {
 					type="button"
 					onClick={() => setMode("cola")}
 					className={cn(
-						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all",
+						"flex-1 py-2 text-sm font-bold rounded-lg transition-all",
 						mode === "cola"
 							? "bg-slate-900 text-white shadow-md"
 							: "text-slate-500 hover:text-slate-700 hover:bg-white/50",
@@ -104,10 +104,10 @@ export function Sidebar() {
 			</div>
 
 			{/* Display */}
-			<div className="relative mb-6">
+			<div className="relative mb-4">
 				<div
 					className={cn(
-						"w-full bg-slate-50 h-16 rounded-xl border border-slate-200 flex items-center justify-center text-2xl font-semibold",
+						"w-full bg-slate-50 h-14 rounded-xl border border-slate-200 flex items-center justify-center text-2xl font-semibold",
 						inputValue === "" ? "text-slate-400" : "text-slate-900",
 					)}
 				>
@@ -125,12 +125,12 @@ export function Sidebar() {
 			</div>
 
 			{/* Status Filters */}
-			<div className={cn("flex gap-2 mb-8", mode === "cola" && "invisible")}>
+			<div className={cn("flex gap-2 mb-6", mode === "cola" && "invisible")}>
 				<button
 					type="button"
 					onClick={() => setSelectedStatus("pending")}
 					className={cn(
-						"flex-1 py-4 uppercase px-1 text-xs font-bold rounded-lg transition-all",
+						"flex-1 py-2 uppercase px-1 text-xs font-bold rounded-lg transition-all",
 						selectedStatus === "pending"
 							? "bg-blue-500 text-white shadow-blue-500/20 shadow-lg border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
@@ -165,7 +165,7 @@ export function Sidebar() {
 			</div>
 
 			{/* Keypad */}
-			<div className="grid grid-cols-3 gap-3 mb-6">
+			<div className="grid grid-cols-3 gap-3 mb-4">
 				{numberButtons.map((num) => (
 					<button
 						type="button"
@@ -189,7 +189,7 @@ export function Sidebar() {
 			</div>
 
 			{/* Confirm Button */}
-			<div className="mt-auto">
+			<div className="">
 				<button
 					type="button"
 					onClick={handleConfirm}
