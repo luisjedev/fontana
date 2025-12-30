@@ -12,7 +12,7 @@ export default defineSchema({
     .index('by_status_time', ['status', 'statusUpdatedAt']),
 
   waitlist: defineTable({
-    people: v.string(), // "4"
+    people: v.number(), // cantidad de personas
     createdAt: v.number(),
   }).index('by_time', ['createdAt']),
 })

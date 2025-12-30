@@ -61,7 +61,7 @@ export function Sidebar({
 			} else {
 				// Cola
 				await addToWaitlist({
-					people: `${inputValue}p`,
+					people: Number.parseInt(inputValue, 10),
 				});
 			}
 			setInputValue("");
@@ -69,7 +69,7 @@ export function Sidebar({
 			addToast(
 				mode === "mesa"
 					? `Mesa ${inputValue} creada`
-					: `Cola ${inputValue}p añadida`,
+					: `${inputValue} añadido a la cola`,
 				"success",
 			);
 		} catch (error: any) {
@@ -82,11 +82,11 @@ export function Sidebar({
 	};
 
 	return (
-		<div className="w-full md:w-[380px] h-full flex flex-col p-6 bg-white border-r border-slate-100 shadow-sm relative z-20 overflow-hidden">
+		<div className="w-full md:w-[380px] h-full flex flex-col p-6 bg-white shadow-sm relative z-20 overflow-hidden">
 			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
-			<div className="flex bg-slate-50 p-1 rounded-xl mb-4">
+			<div className="flex p-1 rounded-xl mb-4 gap-2">
 				<button
 					type="button"
 					onClick={() => setMode("mesa")}
@@ -94,7 +94,7 @@ export function Sidebar({
 						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all",
 						mode === "mesa"
 							? "bg-slate-900 text-white shadow-md"
-							: "text-slate-500 hover:text-slate-700 hover:bg-white/50",
+							: "text-slate-400 bg-slate-200 hover:text-slate-700 hover:bg-white/50",
 					)}
 				>
 					MESA
@@ -106,7 +106,7 @@ export function Sidebar({
 						"flex-1 py-2 text-sm font-bold rounded-lg transition-all",
 						mode === "cola"
 							? "bg-slate-900 text-white shadow-md"
-							: "text-slate-500 hover:text-slate-700 hover:bg-white/50",
+							: "text-slate-400 bg-slate-200 hover:text-slate-700 hover:bg-white/50",
 					)}
 				>
 					COLA
@@ -117,10 +117,13 @@ export function Sidebar({
 			<div className="relative mb-4">
 				<div
 					className={cn(
-						"w-full bg-slate-50 h-14 rounded-xl border border-slate-200 flex items-center justify-center text-2xl font-semibold",
+						"w-full bg-slate-50 h-14 rounded-xl border border-slate-200 flex items-center justify-center text-2xl font-semibold relative",
 						inputValue === "" ? "text-slate-400" : "text-slate-900",
 					)}
 				>
+					<span className="absolute left-4 text-xs font-bold text-slate-400 uppercase tracking-wide">
+						{mode === "mesa" ? "Nº Mesa" : "Nº Personas"}
+					</span>
 					{inputValue === "" ? "0" : inputValue}
 				</div>
 				{inputValue !== "" && (

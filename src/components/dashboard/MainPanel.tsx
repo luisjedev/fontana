@@ -68,7 +68,7 @@ export function MainPanel() {
 				<button
 					type="button"
 					onClick={scrollToTop}
-					className="absolute top-36 right-0 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow animate-bounce"
+					className="absolute top-30 right-0 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-sm p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow animate-bounce"
 				>
 					<ChevronUp size={28} className="text-slate-600" />
 				</button>

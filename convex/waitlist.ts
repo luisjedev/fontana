@@ -11,7 +11,7 @@ export const list = query({
 
 export const add = mutation({
   args: {
-    people: v.string(),
+    people: v.number(),
   },
   handler: async (ctx, args) => {
     await ctx.db.insert('waitlist', {
@@ -20,6 +20,7 @@ export const add = mutation({
     })
   },
 })
+
 
 export const remove = mutation({
   args: {
