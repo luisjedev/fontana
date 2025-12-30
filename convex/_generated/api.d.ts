@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as abandonments from "../abandonments.js";
 import type * as crons from "../crons.js";
 import type * as maintenance from "../maintenance.js";
 import type * as tables from "../tables.js";
@@ -20,6 +21,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  abandonments: typeof abandonments;
   crons: typeof crons;
   maintenance: typeof maintenance;
   tables: typeof tables;

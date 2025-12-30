@@ -15,4 +15,9 @@ export default defineSchema({
     people: v.number(), // cantidad de personas
     createdAt: v.number(),
   }).index('by_time', ['createdAt']),
+
+  abandonments: defineTable({
+    people: v.number(),
+    date: v.string(), // formato "YYYY-MM-DD"
+  }).index('by_date', ['date']),
 })
