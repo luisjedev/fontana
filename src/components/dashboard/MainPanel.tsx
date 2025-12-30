@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "convex/react";
-import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronUp, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../../../convex/_generated/api";
 import { TableCircle } from "./TableCircle";
 import { WaitlistBar } from "./WaitlistBar";
@@ -28,6 +28,8 @@ export function MainPanel() {
 	}, []);
 
 	const [selectedTableNum, setSelectedTableNum] = useState<string | null>(null);
+	const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+	const scrollRef = useRef<HTMLDivElement>(null);
 
 	// Safe access to tables
 	const tables = tablesData || [];
@@ -47,11 +49,36 @@ export function MainPanel() {
 		setSelectedTableNum(null);
 	};
 
+	const handleScroll = () => {
+		if (scrollRef.current) {
+			setShowScrollIndicator(scrollRef.current.scrollTop > 50);
+		}
+	};
+
+	const scrollToTop = () => {
+		scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+	};
+
 	return (
 		<div className="flex-1 bg-[#F8F9FC] h-full overflow-hidden flex flex-col relative">
 			<WaitlistBar />
 
-			<div className="flex-1 overflow-y-auto p-6">
+			{/* Scroll to Top Indicator */}
+			{showScrollIndicator && (
+				<button
+					type="button"
+					onClick={scrollToTop}
+					className="absolute top-36 right-0 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow animate-bounce"
+				>
+					<ChevronUp size={28} className="text-slate-600" />
+				</button>
+			)}
+
+			<div
+				ref={scrollRef}
+				onScroll={handleScroll}
+				className="flex-1 overflow-y-auto p-6"
+			>
 				<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8">
 					{tables.map((t) => {
 						const diff = Date.now() - t.statusUpdatedAt;
