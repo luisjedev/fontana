@@ -23,16 +23,45 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 			{
 				name: "viewport",
-				content: "width=device-width, initial-scale=1",
+				content:
+					"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "Fontana TPV",
+			},
+			// PWA - iOS specific
+			{
+				name: "apple-mobile-web-app-capable",
+				content: "yes",
+			},
+			{
+				name: "apple-mobile-web-app-status-bar-style",
+				content: "black-translucent",
+			},
+			{
+				name: "apple-mobile-web-app-title",
+				content: "Fontana",
+			},
+			// PWA - Theme color for Android
+			{
+				name: "theme-color",
+				content: "#0f172a",
 			},
 		],
 		links: [
 			{
 				rel: "stylesheet",
 				href: appCss,
+			},
+			// PWA Manifest
+			{
+				rel: "manifest",
+				href: "/manifest.json",
+			},
+			// Apple Touch Icon
+			{
+				rel: "apple-touch-icon",
+				href: "/logo192.png",
 			},
 		],
 	}),
