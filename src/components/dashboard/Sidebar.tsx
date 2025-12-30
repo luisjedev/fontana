@@ -1,6 +1,7 @@
 import { useMutation } from "convex/react";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useToastStore } from "@/lib/store/toastStore";
 import { cn } from "@/lib/utils";
 import { api } from "../../../convex/_generated/api";
 
@@ -11,7 +12,8 @@ export function Sidebar() {
 	const [inputValue, setInputValue] = useState("");
 	const [selectedStatus, setSelectedStatus] = useState<TableStatus>("pending");
 	const [mode, setMode] = useState<SidebarMode>("mesa");
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+	const { addToast } = useToastStore();
 
 	const createTable = useMutation(api.tables.create);
 	const addToWaitlist = useMutation(api.waitlist.add);
@@ -35,7 +37,10 @@ export function Sidebar() {
 	};
 
 	const handleConfirm = async () => {
-		if (!inputValue) return;
+		if (!inputValue) {
+			addToast("Introduce un número primero", "error");
+			return;
+		}
 
 		try {
 			if (mode === "mesa") {
@@ -50,35 +55,25 @@ export function Sidebar() {
 				});
 			}
 			setInputValue("");
+			setSelectedStatus("pending"); // Reset status to default
+			addToast(
+				mode === "mesa"
+					? `Mesa ${inputValue} creada`
+					: `Cola ${inputValue}p añadida`,
+				"success",
+			);
 		} catch (error: any) {
 			// Catch duplicate error or others
 			// ConvexError data is in error.data or message usually
 			const message =
 				error.data || error.message || "Error al añadir. Intenta de nuevo.";
-			setErrorMsg(message);
+			addToast(message, "error");
 		}
 	};
 
 	return (
 		<div className="w-[320px] md:w-[380px] h-full flex flex-col p-6 bg-white border-r border-slate-100 shadow-sm relative z-20">
-			{/* Error Modal Overlay */}
-			{errorMsg && (
-				<div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 rounded-none animate-in fade-in duration-200">
-					<div className="bg-white rounded-2xl p-6 shadow-2xl w-full text-center">
-						<div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
-							<X size={24} />
-						</div>
-						<h3 className="text-lg font-bold text-slate-800 mb-2">Error</h3>
-						<p className="text-slate-600 mb-6">{errorMsg}</p>
-						<button
-							onClick={() => setErrorMsg(null)}
-							className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors"
-						>
-							Entendido
-						</button>
-					</div>
-				</div>
-			)}
+			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
 			<div className="flex bg-slate-50 p-1 rounded-xl mb-6">
@@ -88,8 +83,8 @@ export function Sidebar() {
 					className={cn(
 						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all",
 						mode === "mesa"
-							? "bg-white shadow-sm text-slate-900 border border-slate-200/50"
-							: "text-slate-500 hover:text-slate-700",
+							? "bg-slate-900 text-white shadow-md"
+							: "text-slate-500 hover:text-slate-700 hover:bg-white/50",
 					)}
 				>
 					MESA
@@ -100,8 +95,8 @@ export function Sidebar() {
 					className={cn(
 						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all",
 						mode === "cola"
-							? "bg-white shadow-sm text-slate-900 border border-slate-200/50"
-							: "text-slate-500 hover:text-slate-700",
+							? "bg-slate-900 text-white shadow-md"
+							: "text-slate-500 hover:text-slate-700 hover:bg-white/50",
 					)}
 				>
 					COLA
@@ -135,7 +130,7 @@ export function Sidebar() {
 					type="button"
 					onClick={() => setSelectedStatus("pending")}
 					className={cn(
-						"flex-1 py-4 uppercase px-1 text-xs font-semibold rounded-lg transition-all",
+						"flex-1 py-4 uppercase px-1 text-xs font-bold rounded-lg transition-all",
 						selectedStatus === "pending"
 							? "bg-blue-500 text-white shadow-blue-500/20 shadow-lg border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
@@ -147,9 +142,9 @@ export function Sidebar() {
 					type="button"
 					onClick={() => setSelectedStatus("waiting")}
 					className={cn(
-						"flex-1 py-2 uppercase px-1 text-xs font-semibold rounded-lg transition-all",
+						"flex-1 py-2 uppercase px-1 text-xs font-bold rounded-lg transition-all",
 						selectedStatus === "waiting"
-							? "bg-yellow-400 text-slate-900 shadow-yellow-500/20 shadow-lg border-transparent"
+							? "bg-amber-500 text-white shadow-amber-500/20 shadow-lg border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
@@ -159,7 +154,7 @@ export function Sidebar() {
 					type="button"
 					onClick={() => setSelectedStatus("code3")}
 					className={cn(
-						"flex-1 py-2 px-1 uppercase text-xs font-semibold rounded-lg transition-all",
+						"flex-1 py-2 px-1 uppercase text-xs font-bold rounded-lg transition-all",
 						selectedStatus === "code3"
 							? "bg-red-500 text-white shadow-red-500/20 shadow-lg border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",

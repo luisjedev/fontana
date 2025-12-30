@@ -7,6 +7,8 @@ export function WaitlistBar() {
 	const waitlistItems = useQuery(api.waitlist.list) || [];
 	const removeItem = useMutation(api.waitlist.remove);
 
+	if (waitlistItems.length === 0) return null;
+
 	const formatTimeAgo = (timestamp: number) => {
 		const diff = Date.now() - timestamp;
 		const minutes = Math.floor(diff / 60000);
