@@ -11,7 +11,7 @@ type TableStatus = "pending" | "waiting" | "code3";
 const formatTimeAgo = (timestamp: number) => {
 	const diff = Date.now() - timestamp;
 	const minutes = Math.floor(diff / 60000);
-	if (minutes < 1) return "Now";
+	if (minutes < 1) return "Ahora";
 	return `${minutes} min`;
 };
 
