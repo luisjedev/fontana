@@ -72,7 +72,7 @@ export function Sidebar() {
 	};
 
 	return (
-		<div className="w-[320px] md:w-[380px] h-full flex flex-col p-6 bg-white border-r border-slate-100 shadow-sm relative z-20">
+		<div className="w-[320px] md:w-[380px] h-full flex flex-col p-6 bg-white border-r border-slate-100 shadow-sm relative z-20 overflow-hidden">
 			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
