@@ -6,12 +6,12 @@ export function ToastContainer() {
 	const { toasts } = useToastStore();
 
 	return (
-		<div className="fixed bottom-6 right-6 z-100 flex flex-col gap-3 pointer-events-none">
+		<div className="fixed bottom-6 right-2 md:right-6 z-100 flex flex-col gap-3 pointer-events-none">
 			{toasts.map((toast) => (
 				<div
 					key={toast.id}
 					className={cn(
-						"pointer-events-auto flex items-center gap-4 px-8 py-6 rounded-2xl shadow-xl animate-in fade-in slide-in-from-right-8 duration-300",
+						"pointer-events-auto flex items-center gap-4 px-4 md:px-8 py-4 md:py-6 rounded-2xl shadow-xl animate-in fade-in slide-in-from-right-8 duration-300",
 						toast.type === "error"
 							? "bg-white border-2 border-red-100 text-red-600"
 							: "bg-slate-900 text-white",

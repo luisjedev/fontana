@@ -1,5 +1,5 @@
 import { useMutation } from "convex/react";
-import { X } from "lucide-react";
+import { LayoutGrid, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { useToastStore } from "@/lib/store/toastStore";
 import { cn } from "@/lib/utils";
@@ -8,7 +8,17 @@ import { api } from "../../../convex/_generated/api";
 type TableStatus = "pending" | "waiting" | "code3";
 type SidebarMode = "mesa" | "cola";
 
-export function Sidebar() {
+interface SidebarProps {
+	onToggleView?: () => void;
+	showToggle?: boolean;
+	isOnSidebar?: boolean;
+}
+
+export function Sidebar({
+	onToggleView,
+	showToggle = false,
+	isOnSidebar = true,
+}: SidebarProps) {
 	const [inputValue, setInputValue] = useState("");
 	const [selectedStatus, setSelectedStatus] = useState<TableStatus>("pending");
 	const [mode, setMode] = useState<SidebarMode>("mesa");
@@ -72,7 +82,7 @@ export function Sidebar() {
 	};
 
 	return (
-		<div className="w-[320px] md:w-[380px] h-full flex flex-col p-6 bg-white border-r border-slate-100 shadow-sm relative z-20 overflow-hidden">
+		<div className="w-full md:w-[380px] h-full flex flex-col p-6 bg-white border-r border-slate-100 shadow-sm relative z-20 overflow-hidden">
 			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
@@ -176,7 +186,6 @@ export function Sidebar() {
 						{num}
 					</button>
 				))}
-				{/* Placeholder for alignment if needed, or put 0 in center */}
 				<div />
 				<button
 					type="button"
@@ -185,7 +194,18 @@ export function Sidebar() {
 				>
 					0
 				</button>
-				<div />
+				{/* Toggle View Button (mobile only) or empty placeholder */}
+				{showToggle ? (
+					<button
+						type="button"
+						onClick={onToggleView}
+						className="size-16 self-center mx-auto flex items-center justify-center bg-slate-900 text-white rounded-2xl shadow-lg active:scale-95 transition-all"
+					>
+						{isOnSidebar ? <LayoutGrid size={28} /> : <Plus size={28} />}
+					</button>
+				) : (
+					<div />
+				)}
 			</div>
 
 			{/* Confirm Button */}

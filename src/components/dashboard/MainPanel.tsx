@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "convex/react";
-import { ChevronUp, X } from "lucide-react";
+import { Banknote, ChevronUp, HandPlatter, Users, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../../convex/_generated/api";
 import { TableCircle } from "./TableCircle";
@@ -106,18 +106,18 @@ export function MainPanel() {
 					onClick={() => setSelectedTableNum(null)}
 				>
 					<div
-						className="bg-white rounded-3xl shadow-2xl w-[400px] p-6 animate-in fade-in zoom-in-95 duration-200"
+						className="bg-white rounded-3xl shadow-2xl w-[300px] p-6 animate-in fade-in zoom-in-95 duration-200"
 						onClick={(e) => e.stopPropagation()}
 					>
 						{/* Header */}
-						<div className="flex justify-between items-center mb-6">
+						<div className="relative flex justify-center items-center mb-6">
 							<h2 className="text-2xl font-bold text-slate-800">
 								Mesa {activeTable.tableNumber}
 							</h2>
 							<button
 								type="button"
 								onClick={() => setSelectedTableNum(null)}
-								className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 text-slate-500 transition-colors"
+								className="absolute right-0 p-2 bg-slate-100 rounded-full hover:bg-slate-200 text-slate-500 transition-colors"
 							>
 								<X size={20} />
 							</button>
@@ -129,27 +129,30 @@ export function MainPanel() {
 								<button
 									type="button"
 									onClick={() => handleStatusChange("pending")}
-									className="w-full py-4 px-4 rounded-xl text-left font-semibold transition-all border-2 border-slate-100 bg-white text-slate-600 hover:border-slate-200"
+									className="w-full py-4 px-4 rounded-xl font-semibold transition-all bg-blue-500 text-white shadow-lg shadow-blue-500/20 flex items-center justify-center gap-3"
 								>
-									Pendiente
+									<HandPlatter size={24} />
+									<span>Pendiente</span>
 								</button>
 							)}
 							{activeTable.status !== "waiting" && (
 								<button
 									type="button"
 									onClick={() => handleStatusChange("waiting")}
-									className="w-full py-4 px-4 rounded-xl text-left font-semibold transition-all border-2 border-slate-100 bg-white text-slate-600 hover:border-slate-200"
+									className="w-full py-4 px-4 rounded-xl font-semibold transition-all bg-amber-500 text-white shadow-lg shadow-amber-500/20 flex items-center justify-center gap-3"
 								>
-									Esperando
+									<Users size={24} />
+									<span>Esperando</span>
 								</button>
 							)}
 							{activeTable.status !== "code3" && (
 								<button
 									type="button"
 									onClick={() => handleStatusChange("code3")}
-									className="w-full py-4 px-4 rounded-xl text-left font-semibold transition-all border-2 border-slate-100 bg-white text-slate-600 hover:border-slate-200"
+									className="w-full py-4 px-4 rounded-xl font-semibold transition-all bg-red-500 text-white shadow-lg shadow-red-500/20 flex items-center justify-center gap-3"
 								>
-									Codigo 3
+									<Banknote size={24} />
+									<span>Codigo 3</span>
 								</button>
 							)}
 						</div>
