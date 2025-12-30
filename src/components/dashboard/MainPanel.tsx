@@ -48,10 +48,10 @@ export function MainPanel() {
 	};
 
 	return (
-		<div className="flex-1 bg-[#F8F9FC] p-8 h-full overflow-hidden flex flex-col relative">
+		<div className="flex-1 bg-[#F8F9FC] h-full overflow-hidden flex flex-col relative">
 			<WaitlistBar />
 
-			<div className="flex-1 overflow-y-auto pr-4">
+			<div className="flex-1 overflow-y-auto p-6">
 				<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8">
 					{tables.map((t) => {
 						const diff = Date.now() - t.statusUpdatedAt;

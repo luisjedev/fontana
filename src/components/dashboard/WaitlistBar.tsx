@@ -17,14 +17,14 @@ export function WaitlistBar() {
 	};
 
 	return (
-		<div className="flex items-center gap-8 mb-6 w-full border-b border-slate-400 pb-4 h-24">
+		<div className="flex mt-6 items-center pl-2 gap-8 w-full border-b border-slate-400 pb-4 h-24">
 			{/* Header Label */}
 			<div className="flex items-center gap-3 text-slate-400 pl-2">
 				<Hourglass size={32} />
 			</div>
 
 			{/* Scrollable list */}
-			<div className="flex-1 flex gap-6 overflow-x-auto pb-4 scrollbar-hide items-center h-full">
+			<div className="flex-1 flex gap-6 overflow-x-auto scrollbar-hide items-center h-full">
 				{waitlistItems.map((item) => {
 					const diff = Date.now() - item.createdAt;
 					const minutes = Math.floor(diff / 60000);
@@ -35,7 +35,7 @@ export function WaitlistBar() {
 							type="button"
 							key={item._id}
 							onClick={() => removeItem({ id: item._id })}
-							className="shrink-0 flex items-center bg-white rounded-2xl px-6 py-4 shadow-md border border-slate-200 min-w-[160px] justify-between h-16 hover:bg-red-50 transition-colors group cursor-pointer"
+							className="shrink-0 flex items-center bg-white rounded-2xl p-4 shadow-md border border-slate-200 min-w-[160px] justify-between h-12 hover:bg-red-50 transition-colors group cursor-pointer"
 						>
 							<span className="font-bold text-slate-800 text-2xl group-hover:text-red-600 transition-colors">
 								{item.people}
