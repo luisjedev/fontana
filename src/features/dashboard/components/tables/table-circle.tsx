@@ -1,7 +1,7 @@
 import { cn } from "@/shared/lib/utils";
 
 interface TableCircleProps {
-	number: string;
+	number: number;
 	status: "pending" | "waiting" | "code3" | "free";
 	time?: string;
 	badge?: number;

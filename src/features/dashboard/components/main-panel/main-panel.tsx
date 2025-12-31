@@ -27,7 +27,7 @@ export function MainPanel({ tables: tablesData, waitlist }: MainPanelProps) {
 		return () => clearInterval(timer);
 	}, []);
 
-	const [selectedTableNum, setSelectedTableNum] = useState<string | null>(null);
+	const [selectedTableNum, setSelectedTableNum] = useState<number | null>(null);
 	const [showScrollIndicator, setShowScrollIndicator] = useState(false);
 	const scrollRef = useRef<HTMLDivElement>(null);
 

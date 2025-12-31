@@ -29,7 +29,7 @@ export function useSidebarActions() {
 		try {
 			if (mode === "mesa") {
 				await createTable({
-					tableNumber: inputValue,
+					tableNumber: Number.parseInt(inputValue, 10),
 					status: selectedStatus,
 				});
 				toast.success(`Mesa ${inputValue} creada`);

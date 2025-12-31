@@ -3,7 +3,7 @@ import { v } from 'convex/values'
 
 export default defineSchema({
   tables: defineTable({
-    tableNumber: v.string(), // "1", "10"
+    tableNumber: v.number(), // 1, 10
     status: v.string(), // "pending" | "code3" | "waiting"
     statusUpdatedAt: v.number(),
   })

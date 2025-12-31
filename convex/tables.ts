@@ -30,7 +30,7 @@ export const list = query({
 // Create only - throws if exists
 export const create = mutation({
   args: {
-    tableNumber: v.string(),
+    tableNumber: v.number(),
     status: v.string(),
   },
   handler: async (ctx, args) => {
@@ -53,7 +53,7 @@ export const create = mutation({
 
 export const upsert = mutation({
   args: {
-    tableNumber: v.string(),
+    tableNumber: v.number(),
     status: v.string(), // "pending" | "waiting" | "code3"
   },
   handler: async (ctx, args) => {
@@ -83,7 +83,7 @@ export const upsert = mutation({
 
 export const remove = mutation({
   args: {
-    tableNumber: v.string(),
+    tableNumber: v.number(),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db

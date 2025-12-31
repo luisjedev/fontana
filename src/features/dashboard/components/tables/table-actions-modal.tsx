@@ -14,7 +14,7 @@ type TableStatus = "pending" | "waiting" | "code3";
 
 interface Table {
 	_id: Id<"tables">;
-	tableNumber: string;
+	tableNumber: number;
 	status: string;
 	statusUpdatedAt: number;
 }

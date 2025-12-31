@@ -5,14 +5,14 @@ type TableStatus = "pending" | "waiting" | "code3";
 
 interface Table {
 	_id: Id<"tables">;
-	tableNumber: string;
+	tableNumber: number;
 	status: string;
 	statusUpdatedAt: number;
 }
 
 interface TableListProps {
 	tables: Table[];
-	onTableClick: (tableNumber: string) => void;
+	onTableClick: (tableNumber: number) => void;
 }
 
 export function TableList({ tables, onTableClick }: TableListProps) {
