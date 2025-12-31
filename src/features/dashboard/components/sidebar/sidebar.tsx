@@ -1,13 +1,10 @@
 import { LayoutGrid, Plus, Users, Utensils, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSidebarActions } from "@/features/dashboard/shared/hooks/use-sidebar-actions";
-import type {
-	SidebarMode,
-	TableStatus,
-} from "@/features/dashboard/shared/types";
-import { cn } from "@/lib/utils";
+import { useSidebarActions } from "@/features/dashboard/components/sidebar/hooks/use-sidebar-actions";
+import { Button } from "@/shared/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
+import { cn } from "@/shared/lib/utils";
+import type { SidebarMode, TableStatus } from "@/shared/types";
 
 interface SidebarProps {
 	onToggleView?: () => void;

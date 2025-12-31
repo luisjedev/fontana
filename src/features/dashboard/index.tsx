@@ -1,12 +1,12 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { MainPanel } from "@/features/dashboard/layout/main-panel";
-import { Sidebar } from "@/features/dashboard/layout/sidebar";
+import { MainPanel } from "@/features/dashboard/components/main-panel/main-panel";
+import { Sidebar } from "@/features/dashboard/components/sidebar/sidebar";
+import { Button } from "@/shared/components/ui/button";
 
 type MobileView = "sidebar" | "main";
 
-export function TabletLayout() {
+export function DashboardView() {
 	const [activeView, setActiveView] = useState<MobileView>("sidebar");
 
 	const toggleView = () => {

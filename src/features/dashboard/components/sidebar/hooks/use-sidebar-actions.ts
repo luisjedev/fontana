@@ -2,10 +2,7 @@ import { api } from "@convex/_generated/api";
 import { useMutation } from "convex/react";
 import { ConvexError } from "convex/values";
 import { toast } from "sonner";
-import type {
-	SidebarMode,
-	TableStatus,
-} from "@/features/dashboard/shared/types";
+import type { SidebarMode, TableStatus } from "@/shared/types";
 
 interface UseSidebarActionsProps {
 	mode: SidebarMode;

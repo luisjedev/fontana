@@ -1,6 +1,6 @@
 import type { Doc } from "@convex/_generated/dataModel";
 import { Hourglass, Users } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface WaitlistListProps {
 	items: Doc<"waitlist">[];

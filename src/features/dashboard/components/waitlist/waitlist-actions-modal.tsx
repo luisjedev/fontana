@@ -1,11 +1,11 @@
 import { UserX, Utensils } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/shared/components/ui/dialog";
 
 interface WaitlistActionsModalProps {
 	isOpen: boolean;

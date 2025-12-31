@@ -1,5 +1,5 @@
 import type { Id } from "@convex/_generated/dataModel";
-import { TableCircle } from "@/features/dashboard/tables/table-circle";
+import { TableCircle } from "@/features/dashboard/components/tables/table-circle";
 
 type TableStatus = "pending" | "waiting" | "code3";
 

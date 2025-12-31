@@ -2,8 +2,8 @@ import { api } from "@convex/_generated/api";
 import type { Doc } from "@convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
-import { WaitlistActionsModal } from "@/features/dashboard/waitlist/waitlist-actions-modal";
-import { WaitlistList } from "@/features/dashboard/waitlist/waitlist-list";
+import { WaitlistActionsModal } from "./waitlist-actions-modal";
+import { WaitlistList } from "./waitlist-list";
 
 export function WaitlistBar() {
 	const waitlistItems = useQuery(api.waitlist.list) || [];
