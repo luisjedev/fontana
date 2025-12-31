@@ -1,12 +1,12 @@
+import { api } from "@convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { ChevronUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { api } from "../../../convex/_generated/api";
-import { EmptyState } from "./empty-state";
-import { TableActionsModal } from "./table-actions-modal";
-import { TableList } from "./table-list";
-import { WaitlistBar } from "./waitlist-bar";
+import { EmptyState } from "@/features/dashboard/shared/empty-state";
+import { TableActionsModal } from "@/features/dashboard/tables/table-actions-modal";
+import { TableList } from "@/features/dashboard/tables/table-list";
+import { WaitlistBar } from "@/features/dashboard/waitlist/waitlist-bar";
 
 type TableStatus = "pending" | "waiting" | "code3";
 

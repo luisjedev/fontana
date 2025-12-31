@@ -1,14 +1,13 @@
-import { useMutation } from "convex/react";
 import { LayoutGrid, Plus, Users, Utensils, X } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSidebarActions } from "@/features/dashboard/shared/hooks/use-sidebar-actions";
+import type {
+	SidebarMode,
+	TableStatus,
+} from "@/features/dashboard/shared/types";
 import { cn } from "@/lib/utils";
-import { api } from "../../../convex/_generated/api";
-
-type TableStatus = "pending" | "waiting" | "code3";
-type SidebarMode = "mesa" | "cola";
 
 interface SidebarProps {
 	onToggleView?: () => void;
@@ -25,20 +24,19 @@ export function Sidebar({
 	const [selectedStatus, setSelectedStatus] = useState<TableStatus>("pending");
 	const [mode, setMode] = useState<SidebarMode>("mesa");
 
-	const createTable = useMutation(api.tables.create);
-	const addToWaitlist = useMutation(api.waitlist.add);
+	const { handleConfirm: executeConfirm } = useSidebarActions();
 
 	const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 	const handleNumberClick = (num: number) => {
 		if (inputValue.length < 3) {
-			setInputValue((prev) => prev + num.toString());
+			setInputValue((prev) => `${prev}${num}`);
 		}
 	};
 
 	const handleZeroClick = () => {
 		if (inputValue.length > 0 && inputValue.length < 3) {
-			setInputValue((prev) => prev + "0");
+			setInputValue((prev) => `${prev}0`);
 		}
 	};
 
@@ -47,37 +45,15 @@ export function Sidebar({
 	};
 
 	const handleConfirm = async () => {
-		if (!inputValue) {
-			toast.error("Introduce un número primero");
-			return;
-		}
-
-		try {
-			if (mode === "mesa") {
-				await createTable({
-					tableNumber: inputValue,
-					status: selectedStatus,
-				});
-			} else {
-				// Cola
-				await addToWaitlist({
-					people: Number.parseInt(inputValue, 10),
-				});
-			}
-			setInputValue("");
-			setSelectedStatus("pending"); // Reset status to default
-			toast.success(
-				mode === "mesa"
-					? `Mesa ${inputValue} creada`
-					: `${inputValue} añadido a la cola`,
-			);
-		} catch (error: any) {
-			// Catch duplicate error or others
-			// ConvexError data is in error.data or message usually
-			const message =
-				error.data || error.message || "Error al añadir. Intenta de nuevo.";
-			toast.error(message);
-		}
+		await executeConfirm({
+			mode,
+			inputValue,
+			selectedStatus,
+			onSuccess: () => {
+				setInputValue("");
+				setSelectedStatus("pending"); // Reset status to default
+			},
+		});
 	};
 
 	return (

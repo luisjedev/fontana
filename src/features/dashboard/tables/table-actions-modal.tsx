@@ -1,3 +1,4 @@
+import type { Id } from "@convex/_generated/dataModel";
 import { Banknote, CircleCheck, HandPlatter, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +8,6 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import type { Id } from "../../../convex/_generated/dataModel";
 
 type TableStatus = "pending" | "waiting" | "code3";
 

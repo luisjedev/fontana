@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MainPanel } from "../dashboard/main-panel";
-import { Sidebar } from "../dashboard/Sidebar";
+import { MainPanel } from "@/features/dashboard/layout/main-panel";
+import { Sidebar } from "@/features/dashboard/layout/sidebar";
 
 type MobileView = "sidebar" | "main";
 

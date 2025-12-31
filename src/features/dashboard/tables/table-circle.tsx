@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 interface TableCircleProps {
 	number: string;
 	status: "pending" | "waiting" | "code3" | "free";
-	time?: string; // '2 min', 'Now', '15 min'
-	badge?: number; // Notification count
+	time?: string;
+	badge?: number;
 	onClick?: () => void;
 	isWarning?: boolean;
 }
@@ -17,9 +17,6 @@ export function TableCircle({
 	onClick,
 	isWarning,
 }: TableCircleProps) {
-	// The design has heavy rings.
-	// Using Tailwind borders.
-
 	let ringColor = "border-slate-200";
 	let footerColor = "text-slate-500";
 	if (isWarning) footerColor = "text-red-600 font-extrabold";
@@ -38,8 +35,9 @@ export function TableCircle({
 	// 03, 08, 13 are Green.
 
 	return (
-		<div
-			className="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95"
+		<button
+			type="button"
+			className="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95 bg-transparent border-none p-0"
 			onClick={onClick}
 		>
 			<div className="relative">
@@ -65,6 +63,6 @@ export function TableCircle({
 			<span className={cn("text-lg font-medium", footerColor)}>
 				{time || (status === "free" && "")}
 			</span>
-		</div>
+		</button>
 	);
 }
