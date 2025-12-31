@@ -12,7 +12,6 @@ interface WaitlistBarProps {
 export function WaitlistBar({ items }: WaitlistBarProps) {
 	const waitlistItems = items || [];
 	const removeItem = useMutation(api.waitlist.remove);
-	const addAbandonment = useMutation(api.abandonments.add);
 	const [selectedItem, setSelectedItem] = useState<Doc<"waitlist"> | null>(
 		null,
 	);
@@ -21,15 +20,14 @@ export function WaitlistBar({ items }: WaitlistBarProps) {
 
 	const handleSeated = async () => {
 		if (selectedItem) {
-			await removeItem({ id: selectedItem._id });
+			await removeItem({ id: selectedItem._id, outcome: "seated" });
 			setSelectedItem(null);
 		}
 	};
 
 	const handleAbandonment = async () => {
 		if (selectedItem) {
-			await addAbandonment({ people: selectedItem.people });
-			await removeItem({ id: selectedItem._id });
+			await removeItem({ id: selectedItem._id, outcome: "abandoned" });
 			setSelectedItem(null);
 		}
 	};

@@ -18,7 +18,7 @@ export function WaitlistList({ items, onSelect }: WaitlistListProps) {
 			{/* Scrollable list */}
 			<div className="flex-1 flex gap-6 overflow-x-auto scrollbar-hide items-center h-full">
 				{items.map((item) => {
-					const diff = Date.now() - item.createdAt;
+					const diff = Date.now() - item._creationTime;
 					const minutes = Math.floor(diff / 60000);
 					const isWarning = minutes > 10;
 
@@ -42,7 +42,7 @@ export function WaitlistList({ items, onSelect }: WaitlistListProps) {
 									isWarning ? "text-red-600 font-extrabold" : "text-slate-500",
 								)}
 							>
-								{formatTimeAgo(item.createdAt)}
+								{formatTimeAgo(item._creationTime)}
 							</span>
 							<span className="text-slate-300 ml-4 scale-125 group-hover:text-red-300">
 								→

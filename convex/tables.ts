@@ -66,10 +66,11 @@ export const upsert = mutation({
 
     if (existing) {
       // Update
-      await ctx.db.patch(existing._id, {
-        status: args.status,
-        // User req: Time should not reset on status change
-      })
+      const updates: any = { status: args.status }
+      if (args.status === 'code3' && existing.status !== 'code3') {
+        updates.code3At = now
+      }
+      await ctx.db.patch(existing._id, updates)
     } else {
       // Create fallback (should be covered by create, but safe to keep)
       await ctx.db.insert('tables', {
@@ -92,6 +93,26 @@ export const remove = mutation({
       .first()
 
     if (existing) {
+      const now = Date.now()
+      const createdAt = existing._creationTime
+      // Calculate duration in seconds
+      const duration = Math.round((now - createdAt) / 1000)
+
+      let paymentDuration = 0
+      if (existing.code3At) {
+        paymentDuration = Math.round((now - existing.code3At) / 1000)
+      }
+
+      // Store metric
+      const today = new Date().toISOString().split('T')[0]
+      await ctx.db.insert('metrics_tables', {
+        tableNumber: existing.tableNumber,
+        day: today,
+        duration,
+        paymentDuration: paymentDuration > 0 ? paymentDuration : undefined,
+        endedAt: now,
+      })
+
       await ctx.db.delete(existing._id)
     }
   },

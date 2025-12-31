@@ -1,4 +1,5 @@
-import { LayoutGrid, Plus, Users, Utensils, X } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { LayoutGrid, PieChart, Plus, Users, Utensils, X } from "lucide-react";
 import { useState } from "react";
 import { useSidebarActions } from "@/features/dashboard/components/sidebar/hooks/use-sidebar-actions";
 import { Button } from "@/shared/components/ui/button";
@@ -22,6 +23,7 @@ export function Sidebar({
 	const [inputValue, setInputValue] = useState("");
 	const [selectedStatus, setSelectedStatus] = useState<TableStatus>("pending");
 	const [mode, setMode] = useState<SidebarMode>("mesa");
+	const navigate = useNavigate();
 
 	const { handleConfirm: executeConfirm } = useSidebarActions();
 
@@ -161,7 +163,14 @@ export function Sidebar({
 						{num}
 					</Button>
 				))}
-				<div />
+				<Button
+					type="button"
+					variant="outline"
+					onClick={() => navigate({ to: "/analytics" })}
+					className="h-20 w-full bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700 border-transparent rounded-2xl shadow-sm active:scale-95 transition-all flex items-center justify-center"
+				>
+					<PieChart size={28} />
+				</Button>
 				<Button
 					type="button"
 					variant="outline"
