@@ -4,6 +4,8 @@
 
 **Fontana** es una aplicación web ágil y visual diseñada para gestionar el flujo de clientes en tiempo real. Permite al personal monitorizar la ocupación de las mesas, gestionar listas de espera de manera eficiente y controlar los abandonos para optimizar el servicio.
 
+🚀 **Ver en Producción**: [fontana-admin.netlify.app](https://fontana-admin.netlify.app/)
+
 ---
 
 ## 🎯 Funcionalidades Clave
