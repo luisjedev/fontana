@@ -1,5 +1,12 @@
 import { useMutation, useQuery } from "convex/react";
-import { Banknote, ChevronUp, HandPlatter, Users, X } from "lucide-react";
+import {
+	Banknote,
+	ChevronUp,
+	Coffee,
+	HandPlatter,
+	Users,
+	X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../../convex/_generated/api";
 import { TableCircle } from "./TableCircle";
@@ -79,24 +86,39 @@ export function MainPanel() {
 				onScroll={handleScroll}
 				className="flex-1 overflow-y-auto p-6"
 			>
-				<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8">
-					{tables.map((t) => {
-						const diff = Date.now() - t.statusUpdatedAt;
-						const minutes = Math.floor(diff / 60000);
-						const isWarning = minutes > 10;
-						return (
-							<div key={t._id} className="flex justify-center">
-								<TableCircle
-									number={t.tableNumber}
-									status={t.status as TableStatus}
-									time={formatTimeAgo(t.statusUpdatedAt)}
-									isWarning={isWarning}
-									onClick={() => setSelectedTableNum(t.tableNumber)}
-								/>
-							</div>
-						);
-					})}
-				</div>
+				{tablesData && tables.length === 0 ? (
+					<div className="h-full flex flex-col items-center justify-center text-center animate-in fade-in duration-700">
+						<div className="bg-white p-10 rounded-full shadow-sm mb-8 border border-slate-100">
+							<Coffee size={80} className="text-slate-200" />
+						</div>
+						<h3 className="text-3xl font-bold text-slate-800 mb-3">
+							No hay ninguna mesa
+						</h3>
+						<p className="text-slate-400 text-lg max-w-md mx-auto">
+							Las mesas que registres aparecerán aquí para que puedas
+							gestionarlas.
+						</p>
+					</div>
+				) : (
+					<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8">
+						{tables.map((t) => {
+							const diff = Date.now() - t.statusUpdatedAt;
+							const minutes = Math.floor(diff / 60000);
+							const isWarning = minutes > 10;
+							return (
+								<div key={t._id} className="flex justify-center">
+									<TableCircle
+										number={t.tableNumber}
+										status={t.status as TableStatus}
+										time={formatTimeAgo(t.statusUpdatedAt)}
+										isWarning={isWarning}
+										onClick={() => setSelectedTableNum(t.tableNumber)}
+									/>
+								</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 
 			{/* Modal Overlay */}

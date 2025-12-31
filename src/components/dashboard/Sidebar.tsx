@@ -1,5 +1,5 @@
 import { useMutation } from "convex/react";
-import { LayoutGrid, Plus, X } from "lucide-react";
+import { LayoutGrid, Plus, Users, Utensils, X } from "lucide-react";
 import { useState } from "react";
 import { useToastStore } from "@/lib/store/toastStore";
 import { cn } from "@/lib/utils";
@@ -82,33 +82,35 @@ export function Sidebar({
 	};
 
 	return (
-		<div className="w-full md:w-[380px] h-full flex flex-col p-6 bg-white shadow-sm relative z-20 overflow-hidden">
+		<div className="w-full md:w-[380px] h-full flex flex-col px-6 py-4 md:p-6 bg-white shadow-sm relative z-20 overflow-hidden">
 			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
-			<div className="flex p-1 rounded-xl mb-4 gap-2">
+			<div className="flex p-1 rounded-xl mb-2 gap-2">
 				<button
 					type="button"
 					onClick={() => setMode("mesa")}
 					className={cn(
-						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all",
+						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2",
 						mode === "mesa"
 							? "bg-slate-900 text-white shadow-md"
 							: "text-slate-400 bg-slate-200 hover:text-slate-700 hover:bg-white/50",
 					)}
 				>
+					<Utensils size={18} />
 					MESA
 				</button>
 				<button
 					type="button"
 					onClick={() => setMode("cola")}
 					className={cn(
-						"flex-1 py-2 text-sm font-bold rounded-lg transition-all",
+						"flex-1 py-2 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2",
 						mode === "cola"
 							? "bg-slate-900 text-white shadow-md"
 							: "text-slate-400 bg-slate-200 hover:text-slate-700 hover:bg-white/50",
 					)}
 				>
+					<Users size={18} />
 					COLA
 				</button>
 			</div>
@@ -138,14 +140,14 @@ export function Sidebar({
 			</div>
 
 			{/* Status Filters */}
-			<div className={cn("flex gap-2 mb-6", mode === "cola" && "invisible")}>
+			<div className={cn("flex gap-2 mb-4", mode === "cola" && "invisible")}>
 				<button
 					type="button"
 					onClick={() => setSelectedStatus("pending")}
 					className={cn(
-						"flex-1 py-2 uppercase px-1 text-xs font-bold rounded-lg transition-all",
+						"flex-1 py-4 uppercase px-1 text-xs font-bold rounded-lg transition-all",
 						selectedStatus === "pending"
-							? "bg-blue-500 text-white shadow-blue-500/20 shadow-lg border-transparent"
+							? "bg-blue-500 text-white border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
@@ -155,9 +157,9 @@ export function Sidebar({
 					type="button"
 					onClick={() => setSelectedStatus("waiting")}
 					className={cn(
-						"flex-1 py-2 uppercase px-1 text-xs font-bold rounded-lg transition-all",
+						"flex-1 py-4 uppercase px-1 text-xs font-bold rounded-lg transition-all",
 						selectedStatus === "waiting"
-							? "bg-amber-500 text-white shadow-amber-500/20 shadow-lg border-transparent"
+							? "bg-amber-500 text-white border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
@@ -167,9 +169,9 @@ export function Sidebar({
 					type="button"
 					onClick={() => setSelectedStatus("code3")}
 					className={cn(
-						"flex-1 py-2 px-1 uppercase text-xs font-bold rounded-lg transition-all",
+						"flex-1 py-4 px-1 uppercase text-xs font-bold rounded-lg transition-all",
 						selectedStatus === "code3"
-							? "bg-red-500 text-white shadow-red-500/20 shadow-lg border-transparent"
+							? "bg-red-500 text-white border-transparent"
 							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
