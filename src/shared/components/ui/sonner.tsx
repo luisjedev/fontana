@@ -15,24 +15,28 @@ const Toaster = ({ ...props }: ToasterProps) => {
 		<Sonner
 			theme={theme as ToasterProps["theme"]}
 			className="toaster group"
+			position="top-left"
+			duration={1500}
 			toastOptions={{
 				classNames: {
 					toast:
-						"group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-xl p-6 grid grid-cols-[min-content_1fr] gap-6 items-center rounded-2xl w-full justify-around",
-					title: "text-xl font-bold font-sans",
-					description: "text-lg text-muted-foreground font-sans",
+						"group toast group-[.toaster]:bg-background/80 group-[.toaster]:backdrop-blur-md group-[.toaster]:text-foreground group-[.toaster]:border-border/50 group-[.toaster]:shadow-lg p-4 flex gap-3 items-center rounded-xl !w-fit justify-center font-sans",
+					title: "text-sm font-semibold",
+					description: "text-xs text-muted-foreground",
 					actionButton:
-						"group-[.toast]:bg-primary group-[.toast]:text-primary-foreground font-bold",
+						"group-[.toast]:bg-primary group-[.toast]:text-primary-foreground font-medium text-xs py-1.5 px-3 rounded-lg",
 					cancelButton:
-						"group-[.toast]:bg-muted group-[.toast]:text-muted-foreground font-bold",
+						"group-[.toast]:bg-muted group-[.toast]:text-muted-foreground font-medium text-xs py-1.5 px-3 rounded-lg",
 				},
 			}}
 			icons={{
-				success: <CircleCheckIcon className="size-8 text-emerald-500" />,
-				info: <InfoIcon className="size-8 text-blue-500" />,
-				warning: <TriangleAlertIcon className="size-8 text-amber-500" />,
-				error: <OctagonXIcon className="size-8 text-red-500" />,
-				loading: <Loader2Icon className="size-8 animate-spin" />,
+				success: <CircleCheckIcon className="size-5 text-emerald-500" />,
+				info: <InfoIcon className="size-5 text-blue-500" />,
+				warning: <TriangleAlertIcon className="size-5 text-amber-500" />,
+				error: <OctagonXIcon className="size-5 text-red-500" />,
+				loading: (
+					<Loader2Icon className="size-5 animate-spin text-muted-foreground" />
+				),
 			}}
 			style={
 				{

@@ -49,15 +49,17 @@ export const getTodayMetrics = query({
 
     // C. Active Queue Time
     const activeQueueTime = queueMetric?.totalActiveTime || 0
-    // If queue is currently active, we could dynamically add current diff,
-    // but for simplicity we show stored value. Ideally client can add live diff if lastActiveStart is present.
-    // For now, let's just return what is stored.
+
+    // D. Average Wait Time
+    const totalWaitDuration = queueMetric?.totalWaitDuration || 0
+    const avgWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
 
     return {
       avgServiceTime, // seconds
       avgPaymentTime, // seconds
       conversionRate, // percentage (0-100)
       activeQueueTime, // seconds
+      avgWaitTime, // seconds
       // Raw counts for UI if needed
       totalTables: tableMetrics.length,
       waitlistGroups: {

@@ -56,7 +56,7 @@ export const remove = mutation({
     const count = (await ctx.db.query('waitlist').collect()).length
     const today = new Date().toISOString().split('T')[0]
 
-    // Handle Conversion Metrics
+    // Handle Conversion Metrics & Wait Duration
     if (args.outcome) {
       const dailyMetric = await ctx.db
         .query('metrics_daily_queue')
@@ -64,21 +64,21 @@ export const remove = mutation({
         .first()
 
       if (dailyMetric) {
-        let updates: any = {}
+        const waitDuration = Math.round((Date.now() - item._creationTime) / 1000)
+        let updates: any = {
+          totalWaitDuration: (dailyMetric.totalWaitDuration ?? 0) + waitDuration
+        }
+
         if (args.outcome === 'seated') {
-          updates = {
-            seatedPeople: (dailyMetric.seatedPeople || 0) + item.people,
-            seatedGroups: (dailyMetric.seatedGroups || 0) + 1,
-          }
+          updates.seatedPeople = (dailyMetric.seatedPeople || 0) + item.people
+          updates.seatedGroups = (dailyMetric.seatedGroups || 0) + 1
         } else if (args.outcome === 'abandoned') {
-          updates = {
-            abandonedPeople: (dailyMetric.abandonedPeople || 0) + item.people,
-            abandonedGroups: (dailyMetric.abandonedGroups || 0) + 1,
-          }
+          updates.abandonedPeople = (dailyMetric.abandonedPeople || 0) + item.people
+          updates.abandonedGroups = (dailyMetric.abandonedGroups || 0) + 1
         }
         await ctx.db.patch(dailyMetric._id, updates)
       } else {
-         // Should exist if queue was active, but safe fallback logic or ignore if metrics disabled
+         // Should exist if queue was active
       }
     }
 

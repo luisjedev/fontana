@@ -33,5 +33,6 @@ export default defineSchema({
     seatedGroups: v.optional(v.number()),
     abandonedPeople: v.optional(v.number()),
     abandonedGroups: v.optional(v.number()),
+    totalWaitDuration: v.optional(v.number()),
   }).index('by_day', ['day']),
 })

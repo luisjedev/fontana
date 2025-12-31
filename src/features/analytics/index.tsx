@@ -2,7 +2,14 @@ import { api } from "@convex/_generated/api";
 import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Clock, CreditCard, History, Users } from "lucide-react";
+import {
+	ArrowLeft,
+	Clock,
+	CreditCard,
+	History,
+	Hourglass,
+	Users,
+} from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
 function MetricCard({
@@ -110,6 +117,13 @@ export function AnalyticsView() {
 					subtext="Tiempo con gente esperando"
 					icon={History}
 					color="red"
+				/>
+				<MetricCard
+					title="Espera en cola"
+					value={formatSeconds(data.avgWaitTime)}
+					subtext="Tiempo medio por grupo"
+					icon={Hourglass}
+					color="blue"
 				/>
 			</div>
 		</div>
