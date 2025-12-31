@@ -1,3 +1,6 @@
+import { api } from "@convex/_generated/api";
+import { convexQuery } from "@convex-dev/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { MainPanel } from "@/features/dashboard/components/main-panel/main-panel";
@@ -8,6 +11,10 @@ type MobileView = "sidebar" | "main";
 
 export function DashboardView() {
 	const [activeView, setActiveView] = useState<MobileView>("sidebar");
+	const { data: tables } = useSuspenseQuery(convexQuery(api.tables.list, {}));
+	const { data: waitlist } = useSuspenseQuery(
+		convexQuery(api.waitlist.list, {}),
+	);
 
 	const toggleView = () => {
 		setActiveView((prev) => (prev === "sidebar" ? "main" : "sidebar"));
@@ -18,7 +25,7 @@ export function DashboardView() {
 			{/* Desktop/Tablet: Side-by-side layout */}
 			<div className="hidden md:flex w-screen h-screen bg-[#F8F9FC] overflow-hidden font-sans">
 				<Sidebar />
-				<MainPanel />
+				<MainPanel tables={tables} waitlist={waitlist} />
 			</div>
 
 			{/* Mobile: Single view with toggle */}
@@ -31,7 +38,7 @@ export function DashboardView() {
 					/>
 				) : (
 					<>
-						<MainPanel />
+						<MainPanel tables={tables} waitlist={waitlist} />
 						{/* FAB to go back to sidebar on Main view */}
 						<Button
 							type="button"

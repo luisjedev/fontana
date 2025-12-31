@@ -1,5 +1,6 @@
 import { api } from "@convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
+import type { Doc } from "@convex/_generated/dataModel";
+import { useMutation } from "convex/react";
 import { ChevronUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { EmptyState } from "@/features/dashboard/components/main-panel/empty-state";
@@ -10,8 +11,13 @@ import { Button } from "@/shared/components/ui/button";
 
 type TableStatus = "pending" | "waiting" | "code3";
 
-export function MainPanel() {
-	const tablesData = useQuery(api.tables.list);
+interface MainPanelProps {
+	tables: Doc<"tables">[] | undefined;
+	waitlist: Doc<"waitlist">[] | undefined;
+}
+
+export function MainPanel({ tables: tablesData, waitlist }: MainPanelProps) {
+	// const tablesData = useQuery(api.tables.list); // Removed
 	const updateTable = useMutation(api.tables.upsert);
 	const removeTable = useMutation(api.tables.remove);
 
@@ -53,7 +59,7 @@ export function MainPanel() {
 	return (
 		<div className="flex-1 bg-[#F8F9FC] h-full overflow-hidden flex flex-col relative">
 			{/* Waitlist Bar */}
-			<WaitlistBar />
+			<WaitlistBar items={waitlist} />
 
 			{/* Scroll to Top Button */}
 			{showScrollIndicator && (

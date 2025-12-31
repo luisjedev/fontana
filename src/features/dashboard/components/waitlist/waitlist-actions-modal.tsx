@@ -3,6 +3,7 @@ import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from "@/shared/components/ui/dialog";
@@ -27,6 +28,9 @@ export function WaitlistActionsModal({
 					<DialogTitle className="text-2xl font-bold text-slate-800 text-center mb-4">
 						Marca una opción
 					</DialogTitle>
+					<DialogDescription className="sr-only">
+						Opciones para gestionar elemento de la lista de espera
+					</DialogDescription>
 				</DialogHeader>
 
 				{/* Actions */}

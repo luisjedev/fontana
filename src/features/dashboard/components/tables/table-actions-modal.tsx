@@ -4,6 +4,7 @@ import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from "@/shared/components/ui/dialog";
@@ -40,6 +41,9 @@ export function TableActionsModal({
 					<DialogTitle className="text-2xl font-bold text-slate-800 text-center">
 						Mesa {table?.tableNumber}
 					</DialogTitle>
+					<DialogDescription className="sr-only">
+						Acciones para cambiar estado de la mesa
+					</DialogDescription>
 				</DialogHeader>
 
 				{table && (

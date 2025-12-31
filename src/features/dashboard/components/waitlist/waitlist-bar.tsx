@@ -1,12 +1,16 @@
 import { api } from "@convex/_generated/api";
 import type { Doc } from "@convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { useState } from "react";
 import { WaitlistActionsModal } from "./waitlist-actions-modal";
 import { WaitlistList } from "./waitlist-list";
 
-export function WaitlistBar() {
-	const waitlistItems = useQuery(api.waitlist.list) || [];
+interface WaitlistBarProps {
+	items: Doc<"waitlist">[] | undefined;
+}
+
+export function WaitlistBar({ items }: WaitlistBarProps) {
+	const waitlistItems = items || [];
 	const removeItem = useMutation(api.waitlist.remove);
 	const addAbandonment = useMutation(api.abandonments.add);
 	const [selectedItem, setSelectedItem] = useState<Doc<"waitlist"> | null>(
