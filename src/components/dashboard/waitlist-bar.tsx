@@ -1,6 +1,13 @@
 import { useMutation, useQuery } from "convex/react";
-import { Hourglass, Users, UserX, Utensils, X } from "lucide-react";
+import { Hourglass, Users, UserX, Utensils } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -89,53 +96,41 @@ export function WaitlistBar() {
 			</div>
 
 			{/* Action Modal */}
-			{selectedItem && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center">
-					{/* Backdrop */}
-					<div
-						className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-						onClick={() => setSelectedItem(null)}
-						onKeyDown={(e) => e.key === "Escape" && setSelectedItem(null)}
-					/>
-
-					{/* Dialog */}
-					<div className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 duration-200">
-						{/* Close button */}
-						<button
-							type="button"
-							onClick={() => setSelectedItem(null)}
-							className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
-						>
-							<X size={24} />
-						</button>
-
-						{/* Content */}
-						<h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">
+			<Dialog
+				open={!!selectedItem}
+				onOpenChange={(open) => {
+					if (!open) setSelectedItem(null);
+				}}
+			>
+				<DialogContent className="sm:max-w-md bg-white rounded-3xl">
+					<DialogHeader>
+						<DialogTitle className="text-2xl font-bold text-slate-800 text-center mb-4">
 							Marca una opción
-						</h2>
+						</DialogTitle>
+					</DialogHeader>
 
-						{/* Actions */}
-						<div className="flex gap-4">
-							<button
-								type="button"
-								onClick={handleAbandonment}
-								className="flex-1 py-5 px-6 rounded-2xl border-2 border-slate-300 text-slate-600 font-semibold text-lg hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-colors flex flex-col items-center gap-2"
-							>
-								<UserX size={28} />
-								Abandono
-							</button>
-							<button
-								type="button"
-								onClick={handleSeated}
-								className="flex-1 py-5 px-6 rounded-2xl bg-slate-900 text-white font-semibold text-lg hover:bg-slate-800 transition-colors flex flex-col items-center gap-2"
-							>
-								<Utensils size={28} />
-								En mesa
-							</button>
-						</div>
+					{/* Actions */}
+					<div className="flex gap-4">
+						<Button
+							type="button"
+							variant="outline"
+							onClick={handleAbandonment}
+							className="flex-1 h-auto py-5 px-6 rounded-2xl border-2 text-slate-600 font-semibold text-lg hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-colors flex flex-col items-center gap-2"
+						>
+							<UserX size={28} />
+							Abandono
+						</Button>
+						<Button
+							type="button"
+							onClick={handleSeated}
+							className="flex-1 h-auto py-5 px-6 rounded-2xl bg-slate-900 text-white font-semibold text-lg hover:bg-slate-800 transition-colors flex flex-col items-center gap-2"
+						>
+							<Utensils size={28} />
+							En mesa
+						</Button>
 					</div>
-				</div>
-			)}
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }

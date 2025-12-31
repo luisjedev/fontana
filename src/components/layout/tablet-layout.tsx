@@ -1,5 +1,7 @@
+import { Plus } from "lucide-react";
 import { useState } from "react";
-import { MainPanel } from "../dashboard/MainPanel";
+import { Button } from "@/components/ui/button";
+import { MainPanel } from "../dashboard/main-panel";
 import { Sidebar } from "../dashboard/Sidebar";
 
 type MobileView = "sidebar" | "main";
@@ -31,26 +33,13 @@ export function TabletLayout() {
 					<>
 						<MainPanel />
 						{/* FAB to go back to sidebar on Main view */}
-						<button
+						<Button
 							type="button"
 							onClick={toggleView}
-							className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white p-4 rounded-full shadow-xl active:scale-95 transition-transform"
+							className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white w-14 h-14 rounded-full shadow-xl active:scale-95 transition-transform flex items-center justify-center p-0"
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<line x1="12" y1="5" x2="12" y2="19" />
-								<line x1="5" y1="12" x2="19" y2="12" />
-							</svg>
-						</button>
+							<Plus size={24} />
+						</Button>
 					</>
 				)}
 			</div>

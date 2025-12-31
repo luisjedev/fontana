@@ -1,7 +1,9 @@
 import { useMutation } from "convex/react";
 import { LayoutGrid, Plus, Users, Utensils, X } from "lucide-react";
 import { useState } from "react";
-import { useToastStore } from "@/lib/store/toastStore";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { api } from "../../../convex/_generated/api";
 
@@ -22,8 +24,6 @@ export function Sidebar({
 	const [inputValue, setInputValue] = useState("");
 	const [selectedStatus, setSelectedStatus] = useState<TableStatus>("pending");
 	const [mode, setMode] = useState<SidebarMode>("mesa");
-
-	const { addToast } = useToastStore();
 
 	const createTable = useMutation(api.tables.create);
 	const addToWaitlist = useMutation(api.waitlist.add);
@@ -48,7 +48,7 @@ export function Sidebar({
 
 	const handleConfirm = async () => {
 		if (!inputValue) {
-			addToast("Introduce un número primero", "error");
+			toast.error("Introduce un número primero");
 			return;
 		}
 
@@ -66,18 +66,17 @@ export function Sidebar({
 			}
 			setInputValue("");
 			setSelectedStatus("pending"); // Reset status to default
-			addToast(
+			toast.success(
 				mode === "mesa"
 					? `Mesa ${inputValue} creada`
 					: `${inputValue} añadido a la cola`,
-				"success",
 			);
 		} catch (error: any) {
 			// Catch duplicate error or others
 			// ConvexError data is in error.data or message usually
 			const message =
 				error.data || error.message || "Error al añadir. Intenta de nuevo.";
-			addToast(message, "error");
+			toast.error(message);
 		}
 	};
 
@@ -86,34 +85,28 @@ export function Sidebar({
 			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
-			<div className="flex p-1 rounded-xl mb-2 gap-2">
-				<button
-					type="button"
-					onClick={() => setMode("mesa")}
-					className={cn(
-						"flex-1 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2",
-						mode === "mesa"
-							? "bg-slate-900 text-white shadow-md"
-							: "text-slate-400 bg-slate-200 hover:text-slate-700 hover:bg-white/50",
-					)}
-				>
-					<Utensils size={18} />
-					MESA
-				</button>
-				<button
-					type="button"
-					onClick={() => setMode("cola")}
-					className={cn(
-						"flex-1 py-2 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2",
-						mode === "cola"
-							? "bg-slate-900 text-white shadow-md"
-							: "text-slate-400 bg-slate-200 hover:text-slate-700 hover:bg-white/50",
-					)}
-				>
-					<Users size={18} />
-					COLA
-				</button>
-			</div>
+			<Tabs
+				value={mode}
+				onValueChange={(v) => setMode(v as SidebarMode)}
+				className="w-full mb-2"
+			>
+				<TabsList className="grid w-full grid-cols-2">
+					<TabsTrigger
+						value="mesa"
+						className="gap-2 font-bold data-[state=inactive]:text-slate-400"
+					>
+						<Utensils size={18} />
+						MESA
+					</TabsTrigger>
+					<TabsTrigger
+						value="cola"
+						className="gap-2 font-bold data-[state=inactive]:text-slate-400"
+					>
+						<Users size={18} />
+						COLA
+					</TabsTrigger>
+				</TabsList>
+			</Tabs>
 
 			{/* Display */}
 			<div className="relative mb-4">
@@ -141,73 +134,79 @@ export function Sidebar({
 
 			{/* Status Filters */}
 			<div className={cn("flex gap-2 mb-4", mode === "cola" && "invisible")}>
-				<button
+				<Button
 					type="button"
+					variant="outline"
 					onClick={() => setSelectedStatus("pending")}
 					className={cn(
-						"flex-1 py-4 uppercase px-1 text-xs font-bold rounded-lg transition-all",
+						"flex-1 h-auto py-3 uppercase text-xs font-bold border rounded-lg transition-all",
 						selectedStatus === "pending"
-							? "bg-blue-500 text-white border-transparent"
-							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
+							? "bg-blue-500 text-white border-transparent hover:bg-blue-600 hover:text-white"
+							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
 					Pendiente
-				</button>
-				<button
+				</Button>
+				<Button
 					type="button"
+					variant="outline"
 					onClick={() => setSelectedStatus("waiting")}
 					className={cn(
-						"flex-1 py-4 uppercase px-1 text-xs font-bold rounded-lg transition-all",
+						"flex-1 h-auto py-3 uppercase text-xs font-bold border rounded-lg transition-all",
 						selectedStatus === "waiting"
-							? "bg-amber-500 text-white border-transparent"
-							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
+							? "bg-amber-500 text-white border-transparent hover:bg-amber-600 hover:text-white"
+							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
 					Esperando
-				</button>
-				<button
+				</Button>
+				<Button
 					type="button"
+					variant="outline"
 					onClick={() => setSelectedStatus("code3")}
 					className={cn(
-						"flex-1 py-4 px-1 uppercase text-xs font-bold rounded-lg transition-all",
+						"flex-1 h-auto py-3 uppercase text-xs font-bold border rounded-lg transition-all",
 						selectedStatus === "code3"
-							? "bg-red-500 text-white border-transparent"
-							: "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50 hover:text-slate-600",
+							? "bg-red-500 text-white border-transparent hover:bg-red-600 hover:text-white"
+							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
 					Codigo 3
-				</button>
+				</Button>
 			</div>
 
 			{/* Keypad */}
 			<div className="grid grid-cols-3 gap-3 mb-4">
 				{numberButtons.map((num) => (
-					<button
+					<Button
 						type="button"
 						key={num}
+						variant="outline"
 						onClick={() => handleNumberClick(num)}
-						className="h-20 text-2xl font-medium text-slate-700 bg-white border border-slate-100 rounded-2xl shadow-sm hover:bg-slate-50 active:scale-95 transition-all"
+						className="h-20 text-2xl font-medium text-slate-700 border-slate-100 rounded-2xl shadow-sm hover:bg-slate-50 active:scale-95 transition-all"
 					>
 						{num}
-					</button>
+					</Button>
 				))}
 				<div />
-				<button
+				<Button
 					type="button"
+					variant="outline"
 					onClick={handleZeroClick}
-					className="h-20 text-2xl font-medium text-slate-700 bg-white border border-slate-100 rounded-2xl shadow-sm hover:bg-slate-50 active:scale-95 transition-all"
+					className="h-20 text-2xl font-medium text-slate-700 border-slate-100 rounded-2xl shadow-sm hover:bg-slate-50 active:scale-95 transition-all"
 				>
 					0
-				</button>
+				</Button>
 				{/* Toggle View Button (mobile only) or empty placeholder */}
 				{showToggle ? (
-					<button
+					<Button
 						type="button"
+						variant="default"
 						onClick={onToggleView}
-						className="size-16 self-center mx-auto flex items-center justify-center bg-slate-900 text-white rounded-2xl shadow-lg active:scale-95 transition-all"
+						className="size-16 w-full h-20 bg-slate-900 text-white rounded-2xl shadow-lg active:scale-95 transition-all p-0 flex items-center justify-center"
 					>
 						{isOnSidebar ? <LayoutGrid size={28} /> : <Plus size={28} />}
-					</button>
+					</Button>
 				) : (
 					<div />
 				)}
@@ -215,13 +214,13 @@ export function Sidebar({
 
 			{/* Confirm Button */}
 			<div className="">
-				<button
+				<Button
 					type="button"
 					onClick={handleConfirm}
-					className="w-full py-6 bg-slate-900 text-white text-sm font-bold tracking-wide rounded-2xl shadow-xl hover:bg-slate-800 active:scale-95 transition-all"
+					className="w-full py-8 text-sm font-bold tracking-wide rounded-2xl shadow-xl hover:bg-slate-800 active:scale-95 transition-all bg-slate-900 text-white"
 				>
 					CONFIRMAR
-				</button>
+				</Button>
 			</div>
 		</div>
 	);
