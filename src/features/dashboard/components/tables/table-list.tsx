@@ -1,5 +1,6 @@
 import type { Id } from "@convex/_generated/dataModel";
 import { TableCircle } from "@/features/dashboard/components/tables/table-circle";
+import { formatTimeAgo } from "@/shared/lib/utils";
 
 type TableStatus = "pending" | "waiting" | "code3";
 
@@ -16,14 +17,6 @@ interface TableListProps {
 }
 
 export function TableList({ tables, onTableClick }: TableListProps) {
-	// Helper for time inside the component or we can import if shared
-	const formatTimeAgo = (timestamp: number) => {
-		const diff = Date.now() - timestamp;
-		const minutes = Math.floor(diff / 60000);
-		if (minutes < 1) return "Ahora";
-		return `${minutes} min`;
-	};
-
 	return (
 		<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8">
 			{tables.map((t) => {

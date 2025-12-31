@@ -1,6 +1,6 @@
 import type { Doc } from "@convex/_generated/dataModel";
 import { Hourglass, Users } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { cn, formatTimeAgo } from "@/shared/lib/utils";
 
 interface WaitlistListProps {
 	items: Doc<"waitlist">[];
@@ -8,13 +8,6 @@ interface WaitlistListProps {
 }
 
 export function WaitlistList({ items, onSelect }: WaitlistListProps) {
-	const formatTimeAgo = (timestamp: number) => {
-		const diff = Date.now() - timestamp;
-		const minutes = Math.floor(diff / 60000);
-		if (minutes < 1) return "Ahora";
-		return `${minutes} min`;
-	};
-
 	return (
 		<div className="flex items-center pl-2 gap-8 w-full border-b border-slate-200 h-24">
 			{/* Header Label */}

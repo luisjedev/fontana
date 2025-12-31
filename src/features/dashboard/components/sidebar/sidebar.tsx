@@ -12,6 +12,8 @@ interface SidebarProps {
 	isOnSidebar?: boolean;
 }
 
+const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
 export function Sidebar({
 	onToggleView,
 	showToggle = false,
@@ -22,8 +24,6 @@ export function Sidebar({
 	const [mode, setMode] = useState<SidebarMode>("mesa");
 
 	const { handleConfirm: executeConfirm } = useSidebarActions();
-
-	const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 	const handleNumberClick = (num: number) => {
 		if (inputValue.length < 3) {
