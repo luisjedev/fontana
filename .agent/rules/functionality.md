@@ -19,10 +19,9 @@ Designed for high-paced hospitality needing:
 #### Features
 - [ ] Graphical visualization of table distribution (Map/Grid).
 - [ ] Table Statuses:
-    - 🟢 **Free**: Ready for new customers.
-    - 🔴 **Occupied**: Customers dining.
-    - 🟡 **Reserved**: Soon to be occupied.
-    - 🔵 **Cleaning**: Customers left, table dirty.
+    - 🟠 **Pendiente de atender**: Waiting for service.
+    - 👤 **Esperando a alguien**: Waiting for other guests.
+    - 💳 **Esperando cuenta para pagar**: Waiting for the bill.
 - [ ] Quick customer-to-table assignment.
 - [ ] Occupancy time counter.
 
