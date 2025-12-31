@@ -29,7 +29,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 					"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
 			},
 			{
-				title: "Fontana TPV",
+				title: "Fontana",
 			},
 			// PWA - iOS specific
 			{
@@ -73,6 +73,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	}),
 
 	shellComponent: RootDocument,
+	notFoundComponent: () => <div className="p-4">Pagina no encontrada</div>,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
