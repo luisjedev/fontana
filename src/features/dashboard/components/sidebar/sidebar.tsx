@@ -63,7 +63,7 @@ export function Sidebar({
 			<Tabs
 				value={mode}
 				onValueChange={(v) => setMode(v as SidebarMode)}
-				className="w-full mb-2"
+				className="w-full mb-2 border-2 border-slate-200 rounded-lg"
 			>
 				<TabsList className="grid w-full grid-cols-2">
 					<TabsTrigger
@@ -88,7 +88,7 @@ export function Sidebar({
 				<div
 					className={cn(
 						"w-full bg-slate-50 h-14 rounded-xl border border-slate-200 flex items-center justify-center text-2xl font-semibold relative",
-						inputValue === "" ? "text-slate-400" : "text-slate-900",
+						inputValue === "" ? "text-slate-400" : "text-slate-900 bg-white",
 					)}
 				>
 					<span className="absolute left-4 text-xs font-bold text-slate-400 uppercase tracking-wide">
