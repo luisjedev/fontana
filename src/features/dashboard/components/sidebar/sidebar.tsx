@@ -56,7 +56,7 @@ export function Sidebar({
 	};
 
 	return (
-		<div className="w-full md:w-[380px] h-full flex flex-col px-6 py-4 md:p-6 bg-white shadow-sm relative z-20 overflow-hidden">
+		<div className="w-full bg-blue-50 justify-center md:w-[380px] h-full flex flex-col px-6 py-4 md:p-6 shadow-sm relative z-20 overflow-hidden">
 			{/* Local Toast UI Removed - using Global Toast */}
 
 			{/* Top Toggle */}
