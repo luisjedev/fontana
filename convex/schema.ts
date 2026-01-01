@@ -2,8 +2,25 @@ import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { authTables } from "@convex-dev/auth/server";
 
+// Deconstruct authTables to remove 'users' so we can define our own
+// while keeping the other system tables (authSessions, authAccounts, etc.)
+const { users, ...systemAuthTables } = authTables;
+
 export default defineSchema({
-  ...authTables,
+  ...systemAuthTables,
+
+  users: defineTable({
+    name: v.optional(v.string()),
+    username: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+  })
+    .index("by_email", ["email"])
+    .index("by_username", ["username"]),
 
   tables: defineTable({
     tableNumber: v.number(), // 1, 10
