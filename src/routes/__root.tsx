@@ -4,9 +4,12 @@ import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
+	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Authenticated, Unauthenticated } from "convex/react";
+import { SignIn } from "@/features/auth/sign-in-form";
 import { Toaster } from "@/shared/components/ui/sonner";
 import ConvexProvider from "../shared/config/convex/provider";
 import TanStackQueryDevtools from "../shared/config/tanstack-query/devtools";
@@ -72,9 +75,22 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 
-	shellComponent: RootDocument,
+	component: RootComponent,
 	notFoundComponent: () => <div className="p-4">Pagina no encontrada</div>,
 });
+
+function RootComponent() {
+	return (
+		<RootDocument>
+			<Unauthenticated>
+				<SignIn />
+			</Unauthenticated>
+			<Authenticated>
+				<Outlet />
+			</Authenticated>
+		</RootDocument>
+	);
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	const { convexQueryClient } = Route.useRouteContext();
