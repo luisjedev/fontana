@@ -12,6 +12,8 @@
     "check": "biome check"
   },
   "dependencies": {
+    "@auth/core": "0.37.0",
+    "@convex-dev/auth": "^0.0.90",
     "@convex-dev/react-query": "0.1.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dialog": "^1.1.15",

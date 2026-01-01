@@ -9,7 +9,9 @@
  */
 
 import type * as analytics from "../analytics.js";
+import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
+import type * as http from "../http.js";
 import type * as maintenance from "../maintenance.js";
 import type * as tables from "../tables.js";
 import type * as waitlist from "../waitlist.js";
@@ -22,7 +24,9 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
+  auth: typeof auth;
   crons: typeof crons;
+  http: typeof http;
   maintenance: typeof maintenance;
   tables: typeof tables;
   waitlist: typeof waitlist;
