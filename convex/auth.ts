@@ -13,4 +13,9 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 			},
 		}),
 	],
+	session: {
+		// 1 year in ms
+		totalDurationMs: 1000 * 60 * 60 * 24 * 365,
+		inactiveDurationMs: 1000 * 60 * 60 * 24 * 365,
+	},
 });
