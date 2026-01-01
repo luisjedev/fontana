@@ -20,12 +20,12 @@ export const getTodayMetrics = query({
     // --- Calculations ---
 
     // A. Service & Payment Time
-    let totalServiceTime = 0
+    let totalPendingDuration = 0
     let totalPaymentTime = 0
     let paymentCount = 0
 
     for (const m of tableMetrics) {
-      totalServiceTime += m.duration
+      totalPendingDuration += m.pendingDuration || 0
       if (m.paymentDuration) {
         totalPaymentTime += m.paymentDuration
         paymentCount++
@@ -34,7 +34,7 @@ export const getTodayMetrics = query({
 
     const avgServiceTime =
       tableMetrics.length > 0
-        ? Math.round(totalServiceTime / tableMetrics.length)
+        ? Math.round(totalPendingDuration / tableMetrics.length)
         : 0
 
     const avgPaymentTime =

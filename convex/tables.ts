@@ -67,6 +67,12 @@ export const upsert = mutation({
     if (existing) {
       // Update
       const updates: any = { status: args.status }
+      
+      // If moving OUT of pending, capture the duration
+      if (existing.status === 'pending' && args.status !== 'pending') {
+         updates.pendingDuration = Math.round((now - existing.statusUpdatedAt) / 1000)
+      }
+
       if (args.status === 'code3' && existing.status !== 'code3') {
         updates.code3At = now
       }
@@ -103,12 +109,21 @@ export const remove = mutation({
         paymentDuration = Math.round((now - existing.code3At) / 1000)
       }
 
+      // Calculate pending duration
+      let pendingDuration = existing.pendingDuration || 0
+      
+      // If deleting while still in pending, calculate now
+      if (existing.status === 'pending') {
+        pendingDuration = Math.round((now - existing.statusUpdatedAt) / 1000)
+      }
+
       // Store metric
       const today = new Date().toISOString().split('T')[0]
       await ctx.db.insert('metrics_tables', {
         tableNumber: existing.tableNumber,
         day: today,
         duration,
+        pendingDuration: pendingDuration > 0 ? pendingDuration : undefined,
         paymentDuration: paymentDuration > 0 ? paymentDuration : undefined,
         endedAt: now,
       })

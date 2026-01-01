@@ -7,6 +7,7 @@ export default defineSchema({
     status: v.string(), // "pending" | "code3" | "waiting"
     statusUpdatedAt: v.number(),
     code3At: v.optional(v.number()), // Payment start
+    pendingDuration: v.optional(v.number()), // Time spent in pending state
   })
     .index('by_number', ['tableNumber'])
     // We fetch all and sort in function often, but index helps if needed
@@ -20,6 +21,7 @@ export default defineSchema({
     tableNumber: v.number(),
     day: v.string(), // YYYY-MM-DD
     duration: v.number(),
+    pendingDuration: v.optional(v.number()),
     paymentDuration: v.optional(v.number()),
     endedAt: v.number(),
   }).index('by_day', ['day']),
