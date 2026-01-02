@@ -52,4 +52,21 @@ export default defineSchema({
     abandonedGroups: v.optional(v.number()),
     totalWaitDuration: v.optional(v.number()),
   }).index('by_day', ['day']),
+
+  daily_metrics: defineTable({
+    date: v.string(), // YYYY-MM-DD
+    // Aggregated Metrics
+    avgServiceTime: v.number(),
+    avgPaymentTime: v.number(),
+    avgWaitTime: v.number(),
+    // Counts
+    totalTables: v.number(),
+    conversionRate: v.number(),
+    activeQueueTime: v.number(),
+    // Details
+    seatedGroups: v.number(),
+    abandonedGroups: v.number(),
+    seatedPeople: v.number(),
+    abandonedPeople: v.number(),
+  }).index('by_date', ['date']),
 })

@@ -13,8 +13,15 @@ crons.daily(
 // Clean up after dinner shift (23:00 Europe/Madrid -> 22:00 UTC)
 crons.daily(
   "cleanup-dinner",
-  { hourUTC: 22, minuteUTC: 0 },
+  { hourUTC: 21, minuteUTC: 0 },
   internal.maintenance.dailyCleanup
+);
+
+// Consolidate Daily Metrics (22:00 Europe/Madrid -> 21:00 UTC)
+crons.daily(
+  "consolidate-daily-metrics",
+  { hourUTC: 21, minuteUTC: 0 },
+  internal.cron_analytics.consolidateMetrics
 );
 
 export default crons;

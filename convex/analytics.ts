@@ -58,6 +58,12 @@ export const getTodayMetrics = query({
     const totalWaitDuration = queueMetric?.totalWaitDuration || 0
     const avgWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
 
+    // E. Active Sessions
+    const activeSessions = await ctx.db.query("authSessions").collect();
+    const validSessions = activeSessions.filter(
+        (s) => s.expirationTime > Date.now()
+    ).length;
+
     return {
       avgServiceTime, // seconds
       avgPaymentTime, // seconds
@@ -69,8 +75,11 @@ export const getTodayMetrics = query({
       waitlistGroups: {
         seated,
         abandoned,
+        seatedPeople: queueMetric?.seatedPeople || 0,
+        abandonedPeople: queueMetric?.abandonedPeople || 0,
       },
-      lastActiveStart: queueMetric?.lastActiveStart // To animate/live update in frontend
+      lastActiveStart: queueMetric?.lastActiveStart, // To animate/live update in frontend
+      activeSessions: validSessions,
     }
   },
 })
