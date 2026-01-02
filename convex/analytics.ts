@@ -69,6 +69,8 @@ export const getTodayMetrics = query({
       waitlistGroups: {
         seated,
         abandoned,
+        seatedPeople: queueMetric?.seatedPeople || 0,
+        abandonedPeople: queueMetric?.abandonedPeople || 0,
       },
       lastActiveStart: queueMetric?.lastActiveStart // To animate/live update in frontend
     }

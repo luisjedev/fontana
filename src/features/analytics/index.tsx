@@ -21,7 +21,7 @@ function MetricCard({
 }: {
 	title: string;
 	value: string;
-	subtext?: string;
+	subtext?: React.ReactNode;
 	icon: React.ElementType;
 	color: "blue" | "green" | "amber" | "red";
 }) {
@@ -107,7 +107,18 @@ export function AnalyticsView() {
 				<MetricCard
 					title="Conversión Cola"
 					value={`${data.conversionRate}%`}
-					subtext={`${data.waitlistGroups.seated} sentados / ${data.waitlistGroups.abandoned} abandonos`}
+					subtext={
+						<div className="flex flex-col gap-1">
+							<span>
+								{data.waitlistGroups.seated} sentados (
+								{data.waitlistGroups.seatedPeople} pers.)
+							</span>
+							<span>
+								{data.waitlistGroups.abandoned} abandonos (
+								{data.waitlistGroups.abandonedPeople} pers.)
+							</span>
+						</div>
+					}
 					icon={Users}
 					color="amber"
 				/>
