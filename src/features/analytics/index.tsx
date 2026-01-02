@@ -8,6 +8,7 @@ import {
 	CreditCard,
 	History,
 	Hourglass,
+	Smartphone,
 	Users,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -85,6 +86,12 @@ export function AnalyticsView() {
 						Analíticas de Hoy
 					</h1>
 					<p className="text-slate-500">Métricas en tiempo real</p>
+					<div className="flex items-center gap-2 mt-2 px-3 py-1 bg-white border border-slate-200 rounded-sm w-fit shadow-sm">
+						<Smartphone size={16} className="text-emerald-500" />
+						<span className="text-sm font-medium text-slate-600">
+							{data.activeSessions} dispositivos conectados
+						</span>
+					</div>
 				</div>
 			</div>
 
