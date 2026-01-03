@@ -20,7 +20,7 @@ interface TableListProps {
 
 export function TableList({ tables, onTableClick }: TableListProps) {
 	return (
-		<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8">
+		<div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-6">
 			{tables.map((t) => {
 				const startTime = t.timerStartTime || t._creationTime;
 				const diff = Date.now() - startTime;

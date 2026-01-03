@@ -143,6 +143,20 @@ export function AnalyticsView() {
 					icon={Hourglass}
 					color="blue"
 				/>
+				<MetricCard
+					title="Tiempo en Mesa (Espera)"
+					value={formatSeconds(data.avgWaitingDuration)}
+					subtext="Esperando a otras personas"
+					icon={Clock}
+					color="amber"
+				/>
+				<MetricCard
+					title="Duración Total"
+					value={formatSeconds(data.avgTotalDuration)}
+					subtext={`${formatSeconds(data.avgServedDuration)} comiendo`}
+					icon={History}
+					color="green"
+				/>
 			</div>
 		</div>
 	);

@@ -8,6 +8,7 @@ import { TableActionsModal } from "@/features/dashboard/components/tables/table-
 import { TableList } from "@/features/dashboard/components/tables/table-list";
 import { WaitlistBar } from "@/features/dashboard/components/waitlist/waitlist-bar";
 import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
 
 type TableStatus = "pending" | "waiting" | "code3" | "served";
 
@@ -56,6 +57,9 @@ export function MainPanel({ tables: tablesData, waitlist }: MainPanelProps) {
 		scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
 	};
 
+	const activeTables = tables.filter((t) => t.status !== "served");
+	const servedTables = tables.filter((t) => t.status === "served");
+
 	return (
 		<div className="flex-1 bg-[#F8F9FC] h-full overflow-hidden flex flex-col relative">
 			{/* Waitlist Bar */}
@@ -81,10 +85,31 @@ export function MainPanel({ tables: tablesData, waitlist }: MainPanelProps) {
 				{tablesData && tables.length === 0 ? (
 					<EmptyState />
 				) : (
-					<TableList
-						tables={tables}
-						onTableClick={(num) => setSelectedTableNum(num)}
-					/>
+					<div className="flex flex-col gap-6">
+						{activeTables.length > 0 && (
+							<TableList
+								tables={activeTables}
+								onTableClick={(num) => setSelectedTableNum(num)}
+							/>
+						)}
+
+						{servedTables.length > 0 && activeTables.length > 0 && (
+							<div className="flex items-center gap-4">
+								<Separator className="flex-1 bg-slate-200" />
+								<span className="text-xs font-bold text-emerald-600/50 uppercase tracking-widest px-2">
+									Mesas Atendidas
+								</span>
+								<Separator className="flex-1 bg-slate-200" />
+							</div>
+						)}
+
+						{servedTables.length > 0 && (
+							<TableList
+								tables={servedTables}
+								onTableClick={(num) => setSelectedTableNum(num)}
+							/>
+						)}
+					</div>
 				)}
 			</div>
 

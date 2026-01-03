@@ -15,6 +15,7 @@ import {
 	DialogTitle,
 } from "@/shared/components/ui/dialog";
 import { Separator } from "@/shared/components/ui/separator";
+import { cn } from "@/shared/lib/utils";
 
 type TableStatus = "pending" | "waiting" | "code3" | "served";
 
@@ -75,7 +76,7 @@ export function TableActionsModal({
 									<span>Esperando</span>
 								</Button>
 							)}
-							{table.status !== "served" && (
+							{table.status !== "served" && table.status !== "code3" && (
 								<Button
 									type="button"
 									onClick={() => onStatusChange("served")}
@@ -100,10 +101,21 @@ export function TableActionsModal({
 						<Button
 							type="button"
 							onClick={onRelease}
-							className="w-full py-6 text-base font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-lg shadow-slate-900/20 rounded-xl flex items-center justify-center gap-2"
+							className={cn(
+								"w-full py-6 text-base font-bold text-white shadow-lg rounded-xl flex items-center justify-center gap-2",
+								table.status === "code3"
+									? "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20"
+									: "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20",
+							)}
 						>
-							<LogOut size={24} />
-							<span>Liberar Mesa</span>
+							{table.status === "code3" ? (
+								<CircleCheck size={24} />
+							) : (
+								<LogOut size={24} />
+							)}
+							<span>
+								{table.status === "code3" ? "Cobrar y Liberar" : "Liberar Mesa"}
+							</span>
 						</Button>
 					</>
 				)}

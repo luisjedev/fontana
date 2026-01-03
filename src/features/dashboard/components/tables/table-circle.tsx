@@ -33,8 +33,8 @@ export function TableCircle({
 	let numberColor = "text-slate-800";
 
 	if (status === "served") {
-		ringColor = "border-[#D4B483]"; // Light brown border/match
-		circleBg = "bg-[#D4B483]"; // Light brown fill
+		ringColor = "border-[#8B5E3C]"; // Darker brown
+		circleBg = "bg-[#8B5E3C]"; // Darker brown fill
 		numberColor = "text-white";
 	}
 
