@@ -2,7 +2,7 @@ import { cn } from "@/shared/lib/utils";
 
 interface TableCircleProps {
 	number: number;
-	status: "pending" | "waiting" | "code3" | "free";
+	status: "pending" | "waiting" | "code3" | "free" | "served";
 	time?: string;
 	badge?: number;
 	onClick?: () => void;
@@ -29,10 +29,14 @@ export function TableCircle({
 		footerColor = "text-emerald-500 font-bold";
 	}
 
-	// Custom Override for the "Now" blue ones if different from pending?
-	// It seems 05, 06, 10, 11 are Blue. 15 is Blue.
-	// 02, 04, 07, 09, 12, 14 are Orange.
-	// 03, 08, 13 are Green.
+	let circleBg = "bg-white";
+	let numberColor = "text-slate-800";
+
+	if (status === "served") {
+		ringColor = "border-[#8B5E3C]"; // Darker brown
+		circleBg = "bg-[#8B5E3C]"; // Darker brown fill
+		numberColor = "text-white";
+	}
 
 	return (
 		<button
@@ -44,11 +48,14 @@ export function TableCircle({
 				{/* Ring */}
 				<div
 					className={cn(
-						"w-24 h-24 rounded-full border-[5px] flex items-center justify-center bg-white shadow-sm",
+						"w-24 h-24 rounded-full border-[5px] flex items-center justify-center shadow-sm",
 						ringColor,
+						circleBg,
 					)}
 				>
-					<span className="text-3xl font-bold text-slate-800">{number}</span>
+					<span className={cn("text-3xl font-bold", numberColor)}>
+						{number}
+					</span>
 				</div>
 
 				{/* Badge */}

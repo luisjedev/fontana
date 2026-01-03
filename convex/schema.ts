@@ -19,10 +19,12 @@ export default defineSchema({
 
   tables: defineTable({
     tableNumber: v.number(), // 1, 10
-    status: v.string(), // "pending" | "code3" | "waiting"
+    status: v.string(), // "pending" | "code3" | "waiting" | "served"
     statusUpdatedAt: v.number(),
-    code3At: v.optional(v.number()), // Payment start
-    pendingDuration: v.optional(v.number()), // Time spent in pending state
+    pendingDuration: v.optional(v.number()), // Cumulative
+    waitingDuration: v.optional(v.number()), // Cumulative
+    paymentDuration: v.optional(v.number()), // Cumulative
+    timerStartTime: v.optional(v.number()), // Start time for the current visual timer cycle
   })
     .index('by_number', ['tableNumber'])
     // We fetch all and sort in function often, but index helps if needed
@@ -34,10 +36,11 @@ export default defineSchema({
 
   metrics_tables: defineTable({
     tableNumber: v.number(),
-    day: v.string(), // YYYY-MM-DD
-    duration: v.number(),
+    duration: v.number(), // Total duration
     pendingDuration: v.optional(v.number()),
+    waitingDuration: v.optional(v.number()),
     paymentDuration: v.optional(v.number()),
+    day: v.string(), // YYYY-MM-DD
     endedAt: v.number(),
   }).index('by_day', ['day']),
 
@@ -56,9 +59,11 @@ export default defineSchema({
   daily_metrics: defineTable({
     date: v.string(), // YYYY-MM-DD
     // Aggregated Metrics
-    avgServiceTime: v.number(),
-    avgPaymentTime: v.number(),
-    avgWaitTime: v.number(),
+    avgServiceTime: v.number(), // Based on pendingDuration
+    avgPaymentTime: v.number(), // Based on paymentDuration
+    avgWaitingDuration: v.optional(v.number()), // New: Based on waitingDuration
+    avgTotalDuration: v.optional(v.number()), // New: Based on full duration
+    avgQueueWaitTime: v.number(), // Queue wait time (Renamed from avgWaitTime)
     // Counts
     totalTables: v.number(),
     conversionRate: v.number(),

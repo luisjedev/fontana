@@ -28,6 +28,9 @@ export const consolidateMetrics = internalMutation({
     let pendingCount = 0
     let totalPaymentTime = 0
     let paymentCount = 0
+    let totalWaitingDuration = 0
+    let waitingCount = 0
+    let totalDurationSum = 0
 
     for (const m of tableMetrics) {
       if (m.pendingDuration) {
@@ -38,6 +41,13 @@ export const consolidateMetrics = internalMutation({
         totalPaymentTime += m.paymentDuration
         paymentCount++
       }
+      if (m.waitingDuration) {
+        totalWaitingDuration += m.waitingDuration
+        waitingCount++
+      }
+      if (m.duration) {
+        totalDurationSum += m.duration
+      }
     }
 
     const avgServiceTime =
@@ -47,6 +57,12 @@ export const consolidateMetrics = internalMutation({
 
     const avgPaymentTime =
       paymentCount > 0 ? Math.round(totalPaymentTime / paymentCount) : 0
+
+    const avgWaitingDuration = 
+      waitingCount > 0 ? Math.round(totalWaitingDuration / waitingCount) : 0
+
+    const avgTotalDuration = 
+      tableMetrics.length > 0 ? Math.round(totalDurationSum / tableMetrics.length) : 0
 
     // B. Queue Conversion
     const seatedGroups = queueMetric?.seatedGroups || 0
@@ -61,7 +77,7 @@ export const consolidateMetrics = internalMutation({
     // C. Other Metrics
     const activeQueueTime = queueMetric?.totalActiveTime || 0
     const totalWaitDuration = queueMetric?.totalWaitDuration || 0
-    const avgWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
+    const avgQueueWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
     const totalTables = tableMetrics.length
 
     // 5. Insert into daily_metrics
@@ -78,7 +94,9 @@ export const consolidateMetrics = internalMutation({
         await ctx.db.patch(existing._id, {
             avgServiceTime,
             avgPaymentTime,
-            avgWaitTime,
+            avgWaitingDuration,
+            avgTotalDuration,
+            avgQueueWaitTime,
             totalTables,
             conversionRate,
             activeQueueTime,
@@ -92,7 +110,9 @@ export const consolidateMetrics = internalMutation({
             date: today,
             avgServiceTime,
             avgPaymentTime,
-            avgWaitTime,
+            avgWaitingDuration,
+            avgTotalDuration,
+            avgQueueWaitTime,
             totalTables,
             conversionRate,
             activeQueueTime,

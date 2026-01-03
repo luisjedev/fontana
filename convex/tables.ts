@@ -5,6 +5,7 @@ const STATUS_ORDER: Record<string, number> = {
   pending: 1,
   code3: 2,
   waiting: 3,
+  served: 4,
 }
 
 export const list = query({
@@ -21,8 +22,17 @@ export const list = query({
         return orderA - orderB
       }
 
-      // Same status, sort by time (oldest first)
-      return a.statusUpdatedAt - b.statusUpdatedAt
+      // If served, sort by table number (lowest first)
+      if (a.status === 'served' && b.status === 'served') {
+        return a.tableNumber - b.tableNumber
+      }
+
+      // Same status, sort by timerStartTime (oldest first - ascending)
+      // Fallback to _creationTime if timerStartTime is missing
+      const startTimeA = a.timerStartTime || a._creationTime
+      const startTimeB = b.timerStartTime || b._creationTime
+      
+      return startTimeA - startTimeB
     })
   },
 })
@@ -47,6 +57,7 @@ export const create = mutation({
       tableNumber: args.tableNumber,
       status: args.status,
       statusUpdatedAt: Date.now(),
+      timerStartTime: Date.now(),
     })
   },
 })
@@ -66,23 +77,40 @@ export const upsert = mutation({
 
     if (existing) {
       // Update
-      const updates: any = { status: args.status }
+      const updates: any = { status: args.status, statusUpdatedAt: now }
+
+      // Timer Logic:
+      // 1. If moving FROM Served layer to any other layer -> Reset timer (New Cycle)
+      if (existing.status === 'served' && args.status !== 'served') {
+        updates.timerStartTime = now
+      }
+      // 2. If existing timerStartTime is missing (legacy/migration), set it?
+      // No, frontend will fallback to _creationTime if missing.
       
-      // If moving OUT of pending, capture the duration
-      if (existing.status === 'pending' && args.status !== 'pending') {
-         updates.pendingDuration = Math.round((now - existing.statusUpdatedAt) / 1000)
+      // Calculate duration spent in the PREVIOUS state
+      const duration = Math.round((now - existing.statusUpdatedAt) / 1000)
+      
+      if (existing.status === 'pending') {
+         updates.pendingDuration = (existing.pendingDuration || 0) + duration
+      } else if (existing.status === 'waiting') {
+         updates.waitingDuration = (existing.waitingDuration || 0) + duration
+      } else if (existing.status === 'code3') {
+         updates.paymentDuration = (existing.paymentDuration || 0) + duration
+      } else if (existing.status === 'served') {
+         // Optionally track servedDuration
+         // updates.servedDuration = (existing.servedDuration || 0) + duration
       }
 
-      if (args.status === 'code3' && existing.status !== 'code3') {
-        updates.code3At = now
-      }
+      // Special triggers (None for now)
+      
       await ctx.db.patch(existing._id, updates)
     } else {
-      // Create fallback (should be covered by create, but safe to keep)
+      // Create
       await ctx.db.insert('tables', {
         tableNumber: args.tableNumber,
         status: args.status,
         statusUpdatedAt: now,
+        timerStartTime: now,
       })
     }
   },
@@ -101,20 +129,22 @@ export const remove = mutation({
     if (existing) {
       const now = Date.now()
       const createdAt = existing._creationTime
-      // Calculate duration in seconds
+      // Calculate Total Duration
       const duration = Math.round((now - createdAt) / 1000)
 
-      let paymentDuration = 0
-      if (existing.code3At) {
-        paymentDuration = Math.round((now - existing.code3At) / 1000)
-      }
-
-      // Calculate pending duration
-      let pendingDuration = existing.pendingDuration || 0
+      // Calculate final partial duration for current state
+      const currentDuration = Math.round((now - existing.statusUpdatedAt) / 1000)
       
-      // If deleting while still in pending, calculate now
+      let pendingDuration = existing.pendingDuration || 0
+      let waitingDuration = existing.waitingDuration || 0
+      let paymentDuration = existing.paymentDuration || 0
+
       if (existing.status === 'pending') {
-        pendingDuration = Math.round((now - existing.statusUpdatedAt) / 1000)
+        pendingDuration += currentDuration
+      } else if (existing.status === 'waiting') {
+        waitingDuration += currentDuration
+      } else if (existing.status === 'code3') {
+        paymentDuration += currentDuration
       }
 
       // Store metric
@@ -124,6 +154,7 @@ export const remove = mutation({
         day: today,
         duration,
         pendingDuration: pendingDuration > 0 ? pendingDuration : undefined,
+        waitingDuration: waitingDuration > 0 ? waitingDuration : undefined,
         paymentDuration: paymentDuration > 0 ? paymentDuration : undefined,
         endedAt: now,
       })

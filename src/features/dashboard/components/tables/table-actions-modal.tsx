@@ -1,5 +1,11 @@
 import type { Id } from "@convex/_generated/dataModel";
-import { Banknote, CircleCheck, HandPlatter, Users } from "lucide-react";
+import {
+	Banknote,
+	CircleCheck,
+	HandPlatter,
+	LogOut,
+	Users,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -9,8 +15,9 @@ import {
 	DialogTitle,
 } from "@/shared/components/ui/dialog";
 import { Separator } from "@/shared/components/ui/separator";
+import { cn } from "@/shared/lib/utils";
 
-type TableStatus = "pending" | "waiting" | "code3";
+type TableStatus = "pending" | "waiting" | "code3" | "served";
 
 interface Table {
 	_id: Id<"tables">;
@@ -69,6 +76,16 @@ export function TableActionsModal({
 									<span>Esperando</span>
 								</Button>
 							)}
+							{table.status !== "served" && table.status !== "code3" && (
+								<Button
+									type="button"
+									onClick={() => onStatusChange("served")}
+									className="w-full py-6 text-base font-semibold bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-3 rounded-xl"
+								>
+									<CircleCheck size={24} />
+									<span>Atendida</span>
+								</Button>
+							)}
 							{table.status !== "code3" && (
 								<Button
 									type="button"
@@ -83,12 +100,22 @@ export function TableActionsModal({
 						<Separator className="w-full mb-4" />
 						<Button
 							type="button"
-							variant="outline"
 							onClick={onRelease}
-							className="w-full py-6 text-base font-bold text-emerald-600 border-emerald-500 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-700 rounded-xl flex items-center justify-center gap-2"
+							className={cn(
+								"w-full py-6 text-base font-bold text-white shadow-lg rounded-xl flex items-center justify-center gap-2",
+								table.status === "code3"
+									? "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20"
+									: "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20",
+							)}
 						>
-							<CircleCheck size={24} />
-							<span>{table.status === "code3" ? "Cobrada" : "Atendida"}</span>
+							{table.status === "code3" ? (
+								<CircleCheck size={24} />
+							) : (
+								<LogOut size={24} />
+							)}
+							<span>
+								{table.status === "code3" ? "Cobrar y Liberar" : "Liberar Mesa"}
+							</span>
 						</Button>
 					</>
 				)}
