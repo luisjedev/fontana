@@ -24,8 +24,10 @@ export const getTodayMetrics = query({
     let pendingCount = 0
     let totalPaymentTime = 0
     let paymentCount = 0
+    let totalWaitingDuration = 0
+    let waitingCount = 0
+    let totalDurationSum = 0
 
-    for (const m of tableMetrics) {
       if (m.pendingDuration) {
         totalPendingDuration += m.pendingDuration
         pendingCount++
@@ -33,6 +35,13 @@ export const getTodayMetrics = query({
       if (m.paymentDuration) {
         totalPaymentTime += m.paymentDuration
         paymentCount++
+      }
+      if (m.waitingDuration) {
+        totalWaitingDuration += m.waitingDuration
+        waitingCount++
+      }
+      if (m.duration) {
+        totalDurationSum += m.duration
       }
     }
 
@@ -43,6 +52,12 @@ export const getTodayMetrics = query({
 
     const avgPaymentTime =
       paymentCount > 0 ? Math.round(totalPaymentTime / paymentCount) : 0
+
+    const avgWaitingDuration = 
+      waitingCount > 0 ? Math.round(totalWaitingDuration / waitingCount) : 0
+
+    const avgTotalDuration = 
+      tableMetrics.length > 0 ? Math.round(totalDurationSum / tableMetrics.length) : 0
 
     // B. Queue Conversion
     const seated = queueMetric?.seatedGroups || 0
@@ -56,7 +71,7 @@ export const getTodayMetrics = query({
 
     // D. Average Wait Time
     const totalWaitDuration = queueMetric?.totalWaitDuration || 0
-    const avgWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
+    const avgQueueWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
 
     // E. Active Sessions
     const activeSessions = await ctx.db.query("authSessions").collect();
@@ -69,7 +84,11 @@ export const getTodayMetrics = query({
       avgPaymentTime, // seconds
       conversionRate, // percentage (0-100)
       activeQueueTime, // seconds
-      avgWaitTime, // seconds
+      avgQueueWaitTime, // seconds (Queue Wait Time)
+      avgQueueWaitTime, // seconds (Queue Wait Time)
+      avgTableWaitTime: avgServiceTime, // seconds (Table Wait Time / Pending Duration)
+      avgWaitingDuration,
+      avgTotalDuration,
       // Raw counts for UI if needed
       totalTables: tableMetrics.length,
       waitlistGroups: {

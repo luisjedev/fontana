@@ -138,7 +138,7 @@ export function AnalyticsView() {
 				/>
 				<MetricCard
 					title="Espera en cola"
-					value={formatSeconds(data.avgWaitTime)}
+					value={formatSeconds(data.avgQueueWaitTime)}
 					subtext="Tiempo medio por grupo"
 					icon={Hourglass}
 					color="blue"

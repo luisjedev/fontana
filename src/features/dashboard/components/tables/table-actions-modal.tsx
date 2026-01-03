@@ -1,5 +1,11 @@
 import type { Id } from "@convex/_generated/dataModel";
-import { Banknote, CircleCheck, HandPlatter, Users } from "lucide-react";
+import {
+	Banknote,
+	CircleCheck,
+	HandPlatter,
+	LogOut,
+	Users,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -10,7 +16,7 @@ import {
 } from "@/shared/components/ui/dialog";
 import { Separator } from "@/shared/components/ui/separator";
 
-type TableStatus = "pending" | "waiting" | "code3";
+type TableStatus = "pending" | "waiting" | "code3" | "served";
 
 interface Table {
 	_id: Id<"tables">;
@@ -69,6 +75,16 @@ export function TableActionsModal({
 									<span>Esperando</span>
 								</Button>
 							)}
+							{table.status !== "served" && (
+								<Button
+									type="button"
+									onClick={() => onStatusChange("served")}
+									className="w-full py-6 text-base font-semibold bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-3 rounded-xl"
+								>
+									<CircleCheck size={24} />
+									<span>Atendida</span>
+								</Button>
+							)}
 							{table.status !== "code3" && (
 								<Button
 									type="button"
@@ -83,12 +99,11 @@ export function TableActionsModal({
 						<Separator className="w-full mb-4" />
 						<Button
 							type="button"
-							variant="outline"
 							onClick={onRelease}
-							className="w-full py-6 text-base font-bold text-emerald-600 border-emerald-500 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-700 rounded-xl flex items-center justify-center gap-2"
+							className="w-full py-6 text-base font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-lg shadow-slate-900/20 rounded-xl flex items-center justify-center gap-2"
 						>
-							<CircleCheck size={24} />
-							<span>{table.status === "code3" ? "Cobrada" : "Atendida"}</span>
+							<LogOut size={24} />
+							<span>Liberar Mesa</span>
 						</Button>
 					</>
 				)}

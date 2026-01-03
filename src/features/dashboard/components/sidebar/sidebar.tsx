@@ -138,15 +138,15 @@ export function Sidebar({
 				<Button
 					type="button"
 					variant="outline"
-					onClick={() => setSelectedStatus("code3")}
+					onClick={() => setSelectedStatus("served")}
 					className={cn(
 						"flex-1 h-auto py-3 uppercase text-xs font-bold border rounded-lg transition-all",
-						selectedStatus === "code3"
-							? "bg-red-500 text-white border-transparent hover:bg-red-600 hover:text-white"
+						selectedStatus === "served"
+							? "bg-emerald-500 text-white border-transparent hover:bg-emerald-600 hover:text-white"
 							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
 				>
-					Codigo 3
+					Atendida
 				</Button>
 			</div>
 
