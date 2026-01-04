@@ -6,7 +6,7 @@ trigger: always_on
 
 This document serves as the main context for Antigravity agents working in this workspace. It defines the tech stack, architecture, and project rules ('Ultracite' Style).
 
-## 1. 🏗️ Tech Stack (Ultracite)
+## 1. 🏗️ Tech Stack
 
 The project uses a modern high-performance stack:
 
@@ -64,6 +64,7 @@ src/
   ```tsx
   const { data } = useSuspenseQuery(convexQuery(api.tables.list, {}));
   ```
+- **MCP**: Use convex mcp for queries, getting info or manual tests with browser agent
 
 ## 4. 🎨 UI/UX & Design
 
