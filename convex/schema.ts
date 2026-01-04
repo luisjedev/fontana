@@ -19,7 +19,12 @@ export default defineSchema({
 
   tables: defineTable({
     tableNumber: v.number(), // 1, 10
-    status: v.string(), // "pending" | "code3" | "waiting" | "served"
+    status: v.union(
+      v.literal("pending"),
+      v.literal("code3"),
+      v.literal("waiting"),
+      v.literal("served")
+    ),
     statusUpdatedAt: v.number(),
     pendingDuration: v.optional(v.number()), // Cumulative
     waitingDuration: v.optional(v.number()), // Cumulative
@@ -74,4 +79,50 @@ export default defineSchema({
     seatedPeople: v.number(),
     abandonedPeople: v.number(),
   }).index('by_date', ['date']),
+
+  // === FEATURES: PRODUCTS (CATALOG) ===
+
+  // 1. Organization
+  categories: defineTable({
+    name: v.string(),
+    tax_percent: v.number(), // e.g., 10 for 10%
+    sortOrder: v.optional(v.number()),
+    image: v.optional(v.string()), // Image URL/Storage ID
+    isArchived: v.optional(v.boolean()),
+  }),
+
+  // 2. Library (Ingredients/Resources)
+  ingredients: defineTable({
+    name: v.string(),
+    kitchenName: v.optional(v.string()), // Internal name if different
+    isArchived: v.optional(v.boolean()),
+  }),
+
+  // 3. (Deleted: Logic/Rules removed for Simplicity)
+
+  // 4. Sales Units (Unified Products)
+  products: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    price: v.number(),
+    categoryId: v.id("categories"),
+    elementType: v.union(
+      v.literal("product"),
+      v.literal("addon"),
+      v.literal("note")
+    ),
+    image: v.optional(v.string()), // Image URL/Storage ID
+    isArchived: v.optional(v.boolean()),
+  }).index("by_category", ["categoryId"]),
+
+  // 5. Junctions (Relationships)
+
+  // Product <-> Ingredients (Base Recipe / Cost tracking ONLY)
+  product_base_ingredients: defineTable({
+    productId: v.id("products"),
+    ingredientId: v.id("ingredients"),
+    quantity: v.optional(v.number()),
+  }).index("by_product", ["productId"]),
+
+  // (Deleted: Complexity removed)
 })
