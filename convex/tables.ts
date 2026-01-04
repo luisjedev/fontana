@@ -37,7 +37,7 @@ export const list = query({
   },
 })
 
-// Create only - throws if exists
+// Create or Update Status
 export const create = mutation({
   args: {
     tableNumber: v.number(),
@@ -50,7 +50,33 @@ export const create = mutation({
       .first()
 
     if (existing) {
-      throw new ConvexError(`La mesa ${args.tableNumber} ya está en la lista`)
+      if (existing.status === args.status) {
+        throw new ConvexError(
+          `La mesa ${args.tableNumber} ya está en la lista con ese estado`,
+        )
+      }
+
+      // Update Logic (Same as Upsert)
+      const now = Date.now()
+      const updates: any = { status: args.status, statusUpdatedAt: now }
+
+      // Timer Logic
+      if (existing.status === 'served' && args.status !== 'served') {
+        updates.timerStartTime = now
+      }
+
+      const duration = Math.round((now - existing.statusUpdatedAt) / 1000)
+
+      if (existing.status === 'pending') {
+        updates.pendingDuration = (existing.pendingDuration || 0) + duration
+      } else if (existing.status === 'waiting') {
+        updates.waitingDuration = (existing.waitingDuration || 0) + duration
+      } else if (existing.status === 'code3') {
+        updates.paymentDuration = (existing.paymentDuration || 0) + duration
+      }
+
+      await ctx.db.patch(existing._id, updates)
+      return { action: 'updated' }
     }
 
     await ctx.db.insert('tables', {
@@ -59,6 +85,7 @@ export const create = mutation({
       statusUpdatedAt: Date.now(),
       timerStartTime: Date.now(),
     })
+    return { action: 'created' }
   },
 })
 

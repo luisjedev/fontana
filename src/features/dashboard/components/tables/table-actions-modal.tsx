@@ -1,9 +1,9 @@
 import type { Id } from "@convex/_generated/dataModel";
 import {
-	Banknote,
 	CircleCheck,
 	HandPlatter,
 	LogOut,
+	ReceiptEuro,
 	Users,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
@@ -92,7 +92,7 @@ export function TableActionsModal({
 									onClick={() => onStatusChange("code3")}
 									className="w-full py-6 text-base font-semibold bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/20 flex items-center justify-center gap-3 rounded-xl"
 								>
-									<Banknote size={24} />
+									<ReceiptEuro size={24} />
 									<span>Codigo 3</span>
 								</Button>
 							)}
