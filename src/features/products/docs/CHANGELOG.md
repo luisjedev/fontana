@@ -8,4 +8,5 @@
     *   `ingredients`: Base resource library.
 *   **Safety**: Enforced strict `v.union(v.literal(...))` for `elementType` and `tables.status`.
 *   **Removed**:
-    *   Prior complex logic for Modifier Groups (v1/v2) was removed in favor of the simplified Sequential Grouping model.
+    *   `description` field from Products (Simplified data model).
+    *   Prior complex logic for Modifier Groups (v1/v2) removed.

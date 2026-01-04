@@ -103,7 +103,6 @@ export default defineSchema({
   // 4. Sales Units (Unified Products)
   products: defineTable({
     name: v.string(),
-    description: v.optional(v.string()),
     price: v.number(),
     categoryId: v.id("categories"),
     elementType: v.union(
