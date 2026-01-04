@@ -1,5 +1,15 @@
 import { useNavigate } from "@tanstack/react-router";
-import { LayoutGrid, PieChart, Plus, Users, Utensils, X } from "lucide-react";
+import {
+	Bell,
+	CircleCheck,
+	LayoutGrid,
+	PieChart,
+	Plus,
+	ReceiptEuro,
+	Users,
+	Utensils,
+	X,
+} from "lucide-react";
 import { useState } from "react";
 import { useSidebarActions } from "@/features/dashboard/components/sidebar/hooks/use-sidebar-actions";
 import { Button } from "@/shared/components/ui/button";
@@ -108,45 +118,67 @@ export function Sidebar({
 			</div>
 
 			{/* Status Filters */}
-			<div className={cn("flex gap-2 mb-4", mode === "cola" && "invisible")}>
+			<div
+				className={cn(
+					"grid grid-cols-4 gap-2 mb-4",
+					mode === "cola" && "invisible",
+				)}
+			>
 				<Button
 					type="button"
 					variant="outline"
 					onClick={() => setSelectedStatus("pending")}
 					className={cn(
-						"flex-1 h-auto py-3 uppercase text-xs font-bold border rounded-lg transition-all",
+						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
 						selectedStatus === "pending"
 							? "bg-blue-500 text-white border-transparent hover:bg-blue-600 hover:text-white"
 							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
+					title="Pendiente"
 				>
-					Pendiente
+					<Bell size={24} className="size-6" strokeWidth={2.5} />
 				</Button>
 				<Button
 					type="button"
 					variant="outline"
 					onClick={() => setSelectedStatus("waiting")}
 					className={cn(
-						"flex-1 h-auto py-3 uppercase text-xs font-bold border rounded-lg transition-all",
+						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
 						selectedStatus === "waiting"
 							? "bg-amber-500 text-white border-transparent hover:bg-amber-600 hover:text-white"
 							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
+					title="Esperando"
 				>
-					Esperando
+					<Users size={24} className="size-6" strokeWidth={2.5} />
 				</Button>
 				<Button
 					type="button"
 					variant="outline"
 					onClick={() => setSelectedStatus("served")}
 					className={cn(
-						"flex-1 h-auto py-3 uppercase text-xs font-bold border rounded-lg transition-all",
+						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
 						selectedStatus === "served"
 							? "bg-emerald-500 text-white border-transparent hover:bg-emerald-600 hover:text-white"
 							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
 					)}
+					title="Atendida"
 				>
-					Atendida
+					<CircleCheck size={24} className="size-6" strokeWidth={3} />
+				</Button>
+				<Button
+					type="button"
+					variant="outline"
+					onClick={() => setSelectedStatus("code3")}
+					className={cn(
+						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
+						selectedStatus === "code3"
+							? "bg-red-500 text-white border-transparent hover:bg-red-600 hover:text-white"
+							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
+					)}
+					title="Código 3"
+				>
+					<ReceiptEuro size={24} className="size-7" strokeWidth={2.5} />
 				</Button>
 			</div>
 

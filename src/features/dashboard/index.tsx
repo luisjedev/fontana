@@ -43,9 +43,9 @@ export function DashboardView() {
 						<Button
 							type="button"
 							onClick={toggleView}
-							className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white w-14 h-14 rounded-full shadow-xl active:scale-95 transition-transform flex items-center justify-center p-0"
+							className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white size-16 rounded-full shadow-xl active:scale-95 transition-transform flex items-center justify-center p-0"
 						>
-							<Plus size={24} />
+							<Plus size={24} className="size-8" strokeWidth={2.5} />
 						</Button>
 					</>
 				)}

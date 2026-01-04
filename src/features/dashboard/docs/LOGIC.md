@@ -15,7 +15,11 @@ The Dashboard is the operational heart of the application. It provides real-time
     *   Long-press (future) for quick actions.
 
 ### 2. Sidebar (Controls)
-*   Table Creation: Direct shortcuts for "New Code 5" (Standard) or specific states.
+*   **Table Creation**:
+    *   **New Table**: Creates the table with the selected status.
+    *   **Existing Table (Same Status)**: Shows an error (duplicate prevention).
+    *   **Existing Table (Different Status)**: Updates the table's status to the new selection (e.g., changing a table from "Served" to "Code 3").
+*   **Status Selection**: Icons for Pendiente (Bell), Waiting (Users), Served (Check), Code 3 (Money).
 *   Waitlist Toggle: On mobile, switches view between Table Grid and Waitlist.
 
 ## Logic Details

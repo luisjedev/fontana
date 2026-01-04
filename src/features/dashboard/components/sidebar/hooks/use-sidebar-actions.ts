@@ -28,11 +28,16 @@ export function useSidebarActions() {
 
 		try {
 			if (mode === "mesa") {
-				await createTable({
+				const result = await createTable({
 					tableNumber: Number.parseInt(inputValue, 10),
 					status: selectedStatus,
 				});
-				toast.success(`Mesa ${inputValue} creada`);
+
+				if (result.action === "created") {
+					toast.success(`Mesa ${inputValue} creada`);
+				} else {
+					toast.success("Estado de mesa modificado");
+				}
 			} else {
 				// Cola
 				await addToWaitlist({
