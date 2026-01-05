@@ -25,9 +25,9 @@ export function IngredientsList({
 
 	return (
 		<div className="w-full">
-			<div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] gap-4 px-8 py-3 text-xs font-semibold text-muted-foreground border-b bg-gray-50/50">
+			<div className="grid grid-cols-3 gap-4 px-8 py-3 text-xs font-semibold text-muted-foreground border-b bg-gray-50/50">
 				<div>NOMBRE</div>
-				<div>ALERGENOS</div>
+				<div className="text-center">ALERGENOS</div>
 				<div className="text-right">ACCIONES</div>
 			</div>
 
@@ -40,7 +40,7 @@ export function IngredientsList({
 					return (
 						<div
 							key={item._id}
-							className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] gap-4 px-8 py-4 items-center hover:bg-gray-50/50 transition-colors group"
+							className="grid grid-cols-3 gap-4 px-8 py-4 items-center hover:bg-gray-50/50 transition-colors group"
 						>
 							<div className="flex items-center gap-4">
 								<div className="h-10 w-10 rounded-lg flex items-center justify-center text-xl bg-gray-100 text-gray-600">
@@ -59,7 +59,7 @@ export function IngredientsList({
 							</div>
 
 							{/* Allergens Column */}
-							<div className="flex items-center gap-1.5 flex-wrap">
+							<div className="flex items-center gap-1.5 flex-wrap justify-center">
 								{item.allergens?.map((allergenId) => {
 									const allergen = allergensMap.get(allergenId);
 									if (!allergen) return null;
@@ -110,7 +110,7 @@ export function IngredientsList({
 export function IngredientsListSkeleton() {
 	return (
 		<div className="w-full">
-			<div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] gap-4 px-8 py-3 text-xs font-semibold text-muted-foreground border-b bg-gray-50/50">
+			<div className="grid grid-cols-3 gap-4 px-8 py-3 text-xs font-semibold text-muted-foreground border-b bg-gray-50/50">
 				<div>NOMBRE</div>
 				<div>ALERGENOS</div>
 				<div className="text-right">ACCIONES</div>
@@ -119,7 +119,7 @@ export function IngredientsListSkeleton() {
 				{Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map((id) => (
 					<div
 						key={id}
-						className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] gap-4 px-8 py-4 items-center"
+						className="grid grid-cols-3 gap-4 px-8 py-4 items-center"
 					>
 						<div className="flex items-center gap-4">
 							<Skeleton className="h-10 w-10 rounded-lg" />

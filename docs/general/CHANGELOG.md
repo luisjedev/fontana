@@ -9,11 +9,13 @@ For detailed feature-specific changes, see the respective feature changelogs.
 *   **Documentation System**: Established strict `docs/` structure with English-only policy.
 *   **Shared Types**: Consolidated domain types (User, Table, Ingredient, etc.) into `src/shared/types.ts` for consistent project-wide usage.
 *   **Icon System**: Centralized mapping for Allergen and Ingredient icons (`lucide-react`) in `src/shared/`.
+*   **Category Management**: Complete feature implementation for managing product categories (Tax, Color, Images).
 
 ### Changed
 *   **Auth Architecture**: Transitioned to `ConvexAuth` with a manual username/password flow, removing social providers.
 *   **Refactor**: Migrated component structure to specific `src/features/` modules (Screaming Architecture).
 *   **Table Logic**: updated timer logic for "Served" tables to better track service cycles.
+*   **UI/UX**: Standardized List/Grid layouts across Admin features (Ingredients, Categories).
 
 ## [2026-01-01] - Auth & Routing
 ### Added

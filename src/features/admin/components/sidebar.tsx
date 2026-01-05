@@ -37,6 +37,7 @@ export function Sidebar() {
 					<Link
 						key={item.href}
 						to={item.href}
+						activeOptions={{ exact: item.href === "/admin" }}
 						className="flex items-center gap-3 px-3 py-4 rounded-md font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
 						activeProps={{
 							className:

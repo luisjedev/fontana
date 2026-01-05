@@ -11,6 +11,7 @@
 import type * as allergens from "../allergens.js";
 import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
+import type * as categories from "../categories.js";
 import type * as cron_analytics from "../cron_analytics.js";
 import type * as crons from "../crons.js";
 import type * as dev from "../dev.js";
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   allergens: typeof allergens;
   analytics: typeof analytics;
   auth: typeof auth;
+  categories: typeof categories;
   cron_analytics: typeof cron_analytics;
   crons: typeof crons;
   dev: typeof dev;
