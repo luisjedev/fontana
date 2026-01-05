@@ -20,3 +20,10 @@
     *   `products`: Added `ingredients` array (Array of Objects `{id, quantity}`) for consumption metrics.
 *   **Removed**:
     *   `product_base_ingredients`: Deleted in favor of embedded array in `products`.
+
+### Changed
+*   **Ingredients UI**:
+    *   Implemented **Edit Mode**: Reused `CreateIngredientModal` for both creation and editing.
+    *   **Refactor**: Moved data fetching to parent `IngredientsView`, making `IngredientsList` a presentational component.
+    *   **UX**: Added Skeleton loaders and stable keys for better loading states.
+*   **Mutations**: Added `update` mutation for ingredients in `convex/ingredients.ts`.
