@@ -15,6 +15,7 @@ import type * as crons from "../crons.js";
 import type * as dev from "../dev.js";
 import type * as http from "../http.js";
 import type * as maintenance from "../maintenance.js";
+import type * as seedAllergens from "../seedAllergens.js";
 import type * as tables from "../tables.js";
 import type * as waitlist from "../waitlist.js";
 
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   dev: typeof dev;
   http: typeof http;
   maintenance: typeof maintenance;
+  seedAllergens: typeof seedAllergens;
   tables: typeof tables;
   waitlist: typeof waitlist;
 }>;

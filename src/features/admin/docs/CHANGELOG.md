@@ -1,4 +1,4 @@
-# Changelog: Products Feature
+# Changelog: Admin & Products Feature
 
 ## 2026-01-04 - Initial Schema Implementation
 ### Added
