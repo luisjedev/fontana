@@ -10,3 +10,13 @@
 *   **Removed**:
     *   `description` field from Products (Simplified data model).
     *   Prior complex logic for Modifier Groups (v1/v2) removed.
+
+## 2026-01-05 - Allergens & Colors
+### Added
+*   **Schema**:
+    *   `allergens`: New table for specific allergens.
+    *   `ingredients`: Added `allergens` field (List of IDs).
+    *   `categories`: Added `tag_color` field for UI badges.
+    *   `products`: Added `ingredients` array (Array of Objects `{id, quantity}`) for consumption metrics.
+*   **Removed**:
+    *   `product_base_ingredients`: Deleted in favor of embedded array in `products`.

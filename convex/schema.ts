@@ -88,13 +88,19 @@ export default defineSchema({
     tax_percent: v.number(), // e.g., 10 for 10%
     sortOrder: v.optional(v.number()),
     image: v.optional(v.string()), // Image URL/Storage ID
+    tag_color: v.optional(v.string()), // Color for badge
     isArchived: v.optional(v.boolean()),
+  }),
+
+  allergens: defineTable({
+    name: v.string(),
   }),
 
   // 2. Library (Ingredients/Resources)
   ingredients: defineTable({
     name: v.string(),
     kitchenName: v.optional(v.string()), // Internal name if different
+    allergens: v.optional(v.array(v.id("allergens"))),
     isArchived: v.optional(v.boolean()),
   }),
 
@@ -111,17 +117,15 @@ export default defineSchema({
       v.literal("note")
     ),
     image: v.optional(v.string()), // Image URL/Storage ID
+    ingredients: v.optional(v.array(v.object({
+      id: v.id("ingredients"),
+      quantity: v.number(),
+    }))),
     isArchived: v.optional(v.boolean()),
   }).index("by_category", ["categoryId"]),
 
   // 5. Junctions (Relationships)
-
-  // Product <-> Ingredients (Base Recipe / Cost tracking ONLY)
-  product_base_ingredients: defineTable({
-    productId: v.id("products"),
-    ingredientId: v.id("ingredients"),
-    quantity: v.optional(v.number()),
-  }).index("by_product", ["productId"]),
+  // (Simplified: Ingredients are now embedded in products for consumption metrics)
 
   // (Deleted: Complexity removed)
 })

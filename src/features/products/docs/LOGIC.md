@@ -10,20 +10,28 @@
 
 #### 1. Categorías
 *   Organización visual (ej: Cafés, Extras, Notas de Cocina).
-*   `tax_percent`, `image` (Opcional).
+*   `tax_percent`, `image` (Opcional), `tag_color` (Opcional).
 
 #### 2. Productos (Unificado)
 Ahora todo ítem vendible o anotable vive aquí.
 *   **Campos**: `name`, `price`, `categoryId`, `image` (Opcional).
+*   **Receta (Embedded)**: `ingredients` -> Array `{ id, quantity }`.
+    *   Optimizado para lecturas y cálculo de consumo post-venta.
+    *   Elimina la necesidad de tablas auxiliares.
+
 *   **Nuevo Campo `type`**:
     *   `product`: Ítem principal (Café, Tostada).
     *   `addon`: Ítem sumable (Extra Aguacate, Leche Soja). *Antiguos modificadores*.
     *   `note`: Instrucción (Sin Cebolla, Leche Templada). *Precio 0*.
 
-#### 3. Ingredientes (Base/Stock)
-*   Se mantiene SOLO para definición de costes/recetas internas.
-*   No se usa para la venta.
-*   Relación: `product_base_ingredients` (Product -> Ingredients).
+#### 3. Recetas/Base
+#### 3.1 Alérgenos
+*   Lista simple de alérgenos (ej: Gluten, Lácteos).
+
+#### 3.2 Ingredientes (Base/Stock)
+*   Se mantiene para definición de costes, alérgenos y métricas de consumo.
+*   **Campos**: `name`, `allergens` (Array IDs).
+*   Se vinculan directamente en el array `ingredients` del producto.
 
 ---
 
