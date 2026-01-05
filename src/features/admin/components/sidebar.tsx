@@ -51,7 +51,7 @@ export function Sidebar() {
 			</nav>
 
 			{/* Optional Footer/Settings if needed, for now just spacer */}
-			<div className="p-4 border-t border-(--sidebar-border)/50">
+			<div className="p-4 border-t border-sidebar-border/50">
 				{/* Placeholder for future user/settings */}
 			</div>
 		</aside>

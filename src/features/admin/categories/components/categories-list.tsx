@@ -5,7 +5,8 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 import type { Category } from "@/shared/types";
 
 interface CategoriesListProps {
-	categories: Category[];
+	// Extend Category type to include productCount
+	categories: (Category & { productCount?: number })[];
 	onEdit: (category: Category) => void;
 }
 
@@ -50,7 +51,7 @@ export function CategoriesList({ categories, onEdit }: CategoriesListProps) {
 							</div>
 
 							<div className="text-gray-600 font-medium pl-4">
-								{/* Placeholder for items count */}-
+								{item.productCount ?? 0}
 							</div>
 
 							<div className="text-gray-600 font-medium pl-4">

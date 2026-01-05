@@ -18,6 +18,7 @@ import type * as dev from "../dev.js";
 import type * as http from "../http.js";
 import type * as ingredients from "../ingredients.js";
 import type * as maintenance from "../maintenance.js";
+import type * as products from "../products.js";
 import type * as seedAllergens from "../seedAllergens.js";
 import type * as tables from "../tables.js";
 import type * as waitlist from "../waitlist.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   ingredients: typeof ingredients;
   maintenance: typeof maintenance;
+  products: typeof products;
   seedAllergens: typeof seedAllergens;
   tables: typeof tables;
   waitlist: typeof waitlist;

@@ -7,6 +7,18 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     const categories = await ctx.db.query("categories").collect();
+    const products = await ctx.db.query("products").collect();
+
+    // Calculate product counts
+    const productCounts = new Map<string, number>();
+    for (const product of products) {
+      // Assuming we only count active products, or all?
+      // User removed archiving usage, so likely count all valid products.
+      if (product.isArchived) continue; 
+      
+      const count = productCounts.get(product.categoryId) || 0;
+      productCounts.set(product.categoryId, count + 1);
+    }
     
     // Sort logic (optional, but good for UI)
     // For now, consistent sorting by creation time or name is good.
@@ -14,7 +26,10 @@ export const list = query({
     // For search, we do in-memory filtering as list size is expected to be small (<100).
     // If it grows, we should use search index.
     
-    let result = categories.filter((c) => !c.isArchived);
+    let result = categories.filter((c) => !c.isArchived).map((c) => ({
+      ...c,
+      productCount: productCounts.get(c._id) || 0,
+    }));
 
     if (args.search) {
       const searchLower = args.search.toLowerCase();
