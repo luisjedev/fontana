@@ -41,7 +41,12 @@ export const list = query({
 export const create = mutation({
   args: {
     tableNumber: v.number(),
-    status: v.string(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("code3"),
+      v.literal("waiting"),
+      v.literal("served")
+    ),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -92,7 +97,12 @@ export const create = mutation({
 export const upsert = mutation({
   args: {
     tableNumber: v.number(),
-    status: v.string(), // "pending" | "waiting" | "code3"
+    status: v.union(
+      v.literal("pending"),
+      v.literal("code3"),
+      v.literal("waiting"),
+      v.literal("served")
+    )
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db

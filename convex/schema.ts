@@ -2,6 +2,7 @@ import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { authTables } from "@convex-dev/auth/server";
 
+
 export default defineSchema({
   ...authTables,
   users: defineTable({
@@ -19,7 +20,12 @@ export default defineSchema({
 
   tables: defineTable({
     tableNumber: v.number(), // 1, 10
-    status: v.string(), // "pending" | "code3" | "waiting" | "served"
+    status: v.union(
+      v.literal("pending"),
+      v.literal("code3"),
+      v.literal("waiting"),
+      v.literal("served")
+    ),
     statusUpdatedAt: v.number(),
     pendingDuration: v.optional(v.number()), // Cumulative
     waitingDuration: v.optional(v.number()), // Cumulative
@@ -74,4 +80,53 @@ export default defineSchema({
     seatedPeople: v.number(),
     abandonedPeople: v.number(),
   }).index('by_date', ['date']),
+
+  // === FEATURES: PRODUCTS (CATALOG) ===
+
+  // 1. Organization
+  categories: defineTable({
+    name: v.string(),
+    tax_percent: v.number(), // e.g., 10 for 10%
+    sortOrder: v.optional(v.number()),
+    image: v.optional(v.string()), // Image URL/Storage ID
+    tag_color: v.optional(v.string()), // Color for badge
+    isArchived: v.optional(v.boolean()),
+  }),
+
+  allergens: defineTable({
+    name: v.string(),
+  }),
+
+  // 2. Library (Ingredients/Resources)
+  ingredients: defineTable({
+    name: v.string(),
+    kitchenName: v.optional(v.string()), // Internal name if different
+    allergens: v.optional(v.array(v.id("allergens"))),
+    isArchived: v.optional(v.boolean()),
+  }),
+
+  // 3. (Deleted: Logic/Rules removed for Simplicity)
+
+  // 4. Sales Units (Unified Products)
+  products: defineTable({
+    name: v.string(),
+    price: v.number(),
+    categoryId: v.id("categories"),
+    elementType: v.union(
+      v.literal("product"),
+      v.literal("addon"),
+      v.literal("note")
+    ),
+    image: v.optional(v.string()), // Image URL/Storage ID
+    ingredients: v.optional(v.array(v.object({
+      id: v.id("ingredients"),
+      quantity: v.number(),
+    }))),
+    isArchived: v.optional(v.boolean()),
+  }).index("by_category", ["categoryId"]),
+
+  // 5. Junctions (Relationships)
+  // (Simplified: Ingredients are now embedded in products for consumption metrics)
+
+  // (Deleted: Complexity removed)
 })
