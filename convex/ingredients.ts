@@ -1,24 +1,62 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+import { paginationOptsValidator } from "convex/server";
+
+export const getAll = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("ingredients")
+      .withIndex("by_name")
+      .order("asc")
+      .collect();
+  },
+});
+
 export const list = query({
   args: {
     search: v.optional(v.string()),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    const ingredients = await ctx.db.query("ingredients").collect();
-    
-    let result = ingredients;
+    // If there is a search query, we unfortunately fallback to "fetch all and filter"
+    // because Convex doesn't support full-text search + pagination in the same efficient way 
+    // without a specific Search Index, and "name" search suggests "contains", which requires full scan or Search Index.
+    // For now, to keep it simple as per plan:
+    // 1. If search is present -> Fetch All (limit 100 or something reasonable?) -> Filter -> Manually Paginate??
+    // Actually, distinct between Search Mode (client-side filter of everything? or server side limit?) 
+    // and Infinite Scroll Mode (default view).
     
     if (args.search) {
-      const searchLower = args.search.toLowerCase();
-      result = result.filter(i => 
-        i.name.toLowerCase().includes(searchLower)
-      );
+      // Fallback for search: Fetch all, filter, and return.
+      // NOTE: This breaks the "pagination" contract if we try to treat it as a page. 
+      // But purely for the UI, if searching, we likely want to see matches.
+      // Let's stick to the prompt's request: "infinity scroll en las tablas... se vayan cargando el resto".
+      // Usually search replaces the list with results. 
+      // Let's implement efficiently for empty search (infinite scroll), 
+      // and for search, we just return the filtered list as a "single page".
+      
+       const ingredients = await ctx.db.query("ingredients").collect();
+       const searchLower = args.search.toLowerCase();
+       const filtered = ingredients.filter(i => 
+         i.name.toLowerCase().includes(searchLower)
+       ).sort((a, b) => a.name.localeCompare(b.name));
+       
+       // Mock a paginated response so the hook is happy
+       return {
+         page: filtered,
+         isDone: true,
+         continueCursor: "",
+       };
     }
-    
-    // Sort by name case-insensitive
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Default Infinite Scroll Path (Efficient)
+    return await ctx.db
+      .query("ingredients")
+      .withIndex("by_name")
+      .order("asc")
+      .paginate(args.paginationOpts);
   },
 });
 

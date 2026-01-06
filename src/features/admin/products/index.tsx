@@ -39,7 +39,9 @@ export function ProductsView() {
 
 	// Fetch Data
 	const { data: categories } = useQuery(convexQuery(api.categories.list, {}));
-	const { data: ingredients } = useQuery(convexQuery(api.ingredients.list, {}));
+	const { data: ingredients } = useQuery(
+		convexQuery(api.ingredients.getAll, {}),
+	);
 
 	// Build query args
 	const queryArgs: {

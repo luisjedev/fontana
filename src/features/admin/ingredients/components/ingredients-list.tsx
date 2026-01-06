@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import {
 	ALLERGEN_ICONS,
 	type AllergenName,
@@ -14,17 +15,41 @@ interface IngredientsListProps {
 	ingredients: Ingredient[];
 	allergens: Allergen[];
 	onEdit: (ingredient: Ingredient) => void;
+	hasNextPage?: boolean;
+	isFetchingNextPage?: boolean;
+	fetchNextPage?: () => void;
 }
 
 export function IngredientsList({
 	ingredients,
 	allergens,
 	onEdit,
+	hasNextPage,
+	isFetchingNextPage,
+	fetchNextPage,
 }: IngredientsListProps) {
 	const allergensMap = new Map(allergens?.map((a) => [a._id, a]));
+	const observerTarget = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+					fetchNextPage?.();
+				}
+			},
+			{ threshold: 0.1, rootMargin: "100px" },
+		);
+
+		if (observerTarget.current) {
+			observer.observe(observerTarget.current);
+		}
+
+		return () => observer.disconnect();
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	return (
-		<div className="w-full">
+		<div className="w-full pb-4">
 			<div className="grid grid-cols-3 gap-4 px-8 py-3 text-xs font-semibold text-muted-foreground border-b bg-gray-50/50">
 				<div>NOMBRE</div>
 				<div className="text-center">ALERGENOS</div>
@@ -97,7 +122,35 @@ export function IngredientsList({
 						</div>
 					);
 				})}
-				{ingredients.length === 0 && (
+
+				{/* Loading Skeleton / Sentinel */}
+				{(hasNextPage || isFetchingNextPage) && (
+					<div ref={observerTarget} className="w-full divide-y">
+						{Array.from({ length: 3 }).map((_, i) => (
+							<div
+								key={`loading-${i}`}
+								className="grid grid-cols-3 gap-4 px-8 py-4 items-center"
+							>
+								<div className="flex items-center gap-4">
+									<Skeleton className="h-10 w-10 rounded-lg" />
+									<div className="space-y-2">
+										<Skeleton className="h-4 w-32" />
+										<Skeleton className="h-3 w-20" />
+									</div>
+								</div>
+								<div className="flex items-center gap-2 justify-center">
+									<Skeleton className="h-6 w-6 rounded-full" />
+									<Skeleton className="h-6 w-6 rounded-full" />
+								</div>
+								<div className="flex justify-end">
+									<Skeleton className="h-8 w-20 rounded-md" />
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+
+				{ingredients.length === 0 && !isFetchingNextPage && (
 					<div className="p-8 text-center text-muted-foreground">
 						No se han encontrado ingredientes. Añade uno para comenzar.
 					</div>
@@ -116,7 +169,7 @@ export function IngredientsListSkeleton() {
 				<div className="text-right">ACCIONES</div>
 			</div>
 			<div className="divide-y">
-				{Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map((id) => (
+				{Array.from({ length: 10 }, (_, i) => `skeleton-${i}`).map((id) => (
 					<div
 						key={id}
 						className="grid grid-cols-3 gap-4 px-8 py-4 items-center"
