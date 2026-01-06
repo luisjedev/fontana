@@ -6,12 +6,16 @@
 We use a modern, high-performance stack designed for speed and developer experience.
 
 *   **Core**: React 19 (RC), Vite 7, TypeScript 5.7+
+    *   **React Compiler**: Enabled via `babel-plugin-react-compiler` for automatic memoization.
 *   **Fullstack / SSR**: `@tanstack/react-start` (SSR/Hybrid ready)
 *   **Routing**: `@tanstack/react-router` (File-based routing in `src/routes`)
 *   **State Management**:
     *   `convex`: Backend-as-a-Service & Real-time Database.
     *   `@tanstack/react-query`: Async server state & caching.
     *   `zustand`: Lightweight global client state.
+*   **Form Management**:
+    *   `@tanstack/react-form`: Headless form logic.
+    *   `zod`: Schema validation (standard adapter).
 *   **Styling**:
     *   Tailwind CSS 4 (Zero-config, CSS-first).
     *   **Shadcn UI**: Component library (Radix UI + Tailwind).

@@ -13,6 +13,8 @@ The project uses a modern high-performance stack:
 - **Core**: React 19 (RC), Vite 7, TypeScript 5.7+
 - **Fullstack / SSR**: `@tanstack/react-start` (Ready for SSR/Hybrid)
 - **Routing**: `@tanstack/react-router` (File-based routing in `src/routes`)
+- **forms**: Tanstack form
+- React compiler
 - **State & Data Fetching**:
   - `@tanstack/react-query` (Async state management)
   - `convex` (Backend-as-a-Service, Real-time db)
