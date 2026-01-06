@@ -120,7 +120,7 @@ export function ProductsList({
 								<Button
 									variant="ghost"
 									size="icon"
-									className="text-white bg-slate-900 py-6 px-10 hover:bg-slate-800"
+									className="text-white bg-slate-900 py-6 px-10 hover:bg-slate-200"
 									onClick={() => onEdit(item)}
 								>
 									Editar

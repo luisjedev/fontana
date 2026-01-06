@@ -2,7 +2,7 @@ import { convexQuery } from "@convex-dev/react-query";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useConvex } from "convex/react";
 import { Plus, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateIngredientModal } from "@/features/admin/ingredients/components/create-ingredient-modal";
 import {
 	IngredientsList,
@@ -60,10 +60,7 @@ export function IngredientsView() {
 			lastPage.isDone ? null : lastPage.continueCursor,
 	});
 
-	const ingredients = useMemo(
-		() => data?.pages.flatMap((page) => page.page) ?? [],
-		[data],
-	);
+	const ingredients = data?.pages.flatMap((page) => page.page) ?? [];
 
 	const handleEdit = (ingredient: Ingredient) => {
 		setEditingIngredient(ingredient);

@@ -1,5 +1,11 @@
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
+import { useForm } from "@tanstack/react-form";
+
 import { clsx } from "clsx";
+import { useMutation } from "convex/react";
 import { Check } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -7,6 +13,12 @@ import {
 	DialogDescription,
 	DialogTitle,
 } from "@/shared/components/ui/dialog";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import {
 	Select,
@@ -16,7 +28,11 @@ import {
 	SelectValue,
 } from "@/shared/components/ui/select";
 import type { Category } from "@/shared/types";
-import { CATEGORY_COLORS, useCategoryForm } from "../hooks/use-category-form";
+import {
+	CATEGORY_COLORS,
+	categorySchema,
+	getCategoryDefaultValues,
+} from "../hooks/use-category-form";
 
 interface CreateCategoryModalProps {
 	open: boolean;
@@ -36,10 +52,48 @@ export function CreateCategoryModal({
 	onOpenChange,
 	category,
 }: CreateCategoryModalProps) {
-	const { formState, setField, handleSubmit, isSubmitting } = useCategoryForm({
-		open,
-		onOpenChange,
-		category,
+	const createCategory = useMutation(api.categories.create);
+	const updateCategory = useMutation(api.categories.update);
+
+	const defaultValues = getCategoryDefaultValues(category);
+
+	const form = useForm({
+		defaultValues,
+
+		validators: {
+			onChange: categorySchema,
+		},
+		onSubmit: async ({ value }) => {
+			try {
+				if (category) {
+					await updateCategory({
+						id: category._id as Id<"categories">,
+						name: value.name,
+						tax_percent: Number(value.taxPercent),
+						tag_color: value.selectedColor,
+						image: value.imageUrl || undefined,
+					});
+					toast.success("Categoría actualizada correctamente");
+				} else {
+					await createCategory({
+						name: value.name,
+						tax_percent: Number(value.taxPercent),
+						tag_color: value.selectedColor,
+						image: value.imageUrl || undefined,
+					});
+					toast.success("Categoría creada correctamente");
+				}
+				form.reset();
+				onOpenChange(false);
+			} catch (error) {
+				toast.error(
+					category
+						? "Error al actualizar la categoría"
+						: "Error al crear la categoría",
+				);
+				console.error(error);
+			}
+		},
 	});
 
 	return (
@@ -64,78 +118,118 @@ export function CreateCategoryModal({
 						>
 							Cancelar
 						</Button>
-						<Button
-							className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2 p-6"
-							onClick={handleSubmit}
-							disabled={isSubmitting}
+						<form.Subscribe
+							selector={(state) => [state.canSubmit, state.isSubmitting]}
 						>
-							<Check className="h-4 w-4" strokeWidth={2} />
-							{isSubmitting ? "Guardando..." : "Guardar Categoría"}
-						</Button>
+							{([canSubmit, isSubmitting]) => (
+								<Button
+									className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2 p-6"
+									onClick={() => {
+										void form.handleSubmit();
+									}}
+									disabled={!canSubmit}
+								>
+									<Check className="h-4 w-4" strokeWidth={2} />
+									{isSubmitting ? "Guardando..." : "Guardar Categoría"}
+								</Button>
+							)}
+						</form.Subscribe>
 					</div>
 				</div>
 
 				<div className="p-8 space-y-8 bg-white/50">
 					<div className="grid grid-cols-2 gap-6">
-						<div className="space-y-4">
-							<span className="text-sm font-semibold text-foreground">
-								Nombre de la categoría
-							</span>
-							<div className="relative pt-2">
-								<Input
-									value={formState.name}
-									onChange={(e) => setField("name", e.target.value)}
-									placeholder="e.j. Desayunos"
-									className="text-lg px-4 bg-white"
-								/>
-							</div>
-						</div>
-						<div className="space-y-4">
-							<span className="text-sm font-semibold text-foreground">
-								Porcentaje de Impuesto
-							</span>
-							<div className="relative pt-2">
-								<Select
-									value={formState.taxPercent}
-									onValueChange={(value) => setField("taxPercent", value)}
-								>
-									<SelectTrigger className="h-14 text-lg px-4 bg-white w-full">
-										<SelectValue placeholder="Seleccionar %" />
-									</SelectTrigger>
-									<SelectContent>
-										{TAX_OPTIONS.map((option) => (
-											<SelectItem key={option.value} value={option.value}>
-												{option.label}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
-						</div>
+						<form.Field name="name">
+							{(field) => (
+								<FormItem>
+									<FormLabel error={!!field.state.meta.errors.length}>
+										Nombre de la categoría
+									</FormLabel>
+									<div className="relative pt-2">
+										<FormControl error={!!field.state.meta.errors.length}>
+											<Input
+												value={field.state.value}
+												onChange={(e) => field.handleChange(e.target.value)}
+												placeholder="e.j. Desayunos"
+												className="text-lg px-4 bg-white"
+											/>
+										</FormControl>
+									</div>
+									<FormMessage>
+										{field.state.meta.errors.join(", ")}
+									</FormMessage>
+								</FormItem>
+							)}
+						</form.Field>
+
+						<form.Field name="taxPercent">
+							{(field) => (
+								<FormItem>
+									<FormLabel error={!!field.state.meta.errors.length}>
+										Porcentaje de Impuesto
+									</FormLabel>
+									<div className="relative pt-2">
+										<Select
+											value={field.state.value}
+											onValueChange={field.handleChange}
+										>
+											<FormControl error={!!field.state.meta.errors.length}>
+												<SelectTrigger className="h-14 text-lg px-4 bg-white w-full">
+													<SelectValue placeholder="Seleccionar %" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{TAX_OPTIONS.map((option) => (
+													<SelectItem key={option.value} value={option.value}>
+														{option.label}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</div>
+									<FormMessage>
+										{field.state.meta.errors.join(", ")}
+									</FormMessage>
+								</FormItem>
+							)}
+						</form.Field>
 					</div>
 
-					<div className="space-y-4">
-						<span className="text-sm font-semibold text-foreground">
-							Color de etiqueta
-						</span>
-						<div className="flex flex-wrap gap-4 pt-2">
-							{CATEGORY_COLORS.map((color) => (
-								<button
-									key={color}
-									type="button"
-									onClick={() => setField("selectedColor", color)}
-									className={clsx(
-										"h-12 w-12 rounded-full border-2 transition-all",
-										formState.selectedColor === color
-											? "border-blue-600 scale-110"
-											: "border-transparent hover:scale-105",
-									)}
-									style={{ backgroundColor: color }}
-									aria-label={`Select color ${color}`}
-								/>
-							))}
-						</div>
-					</div>
+					<form.Field name="selectedColor">
+						{(field) => (
+							<FormItem>
+								<FormLabel error={!!field.state.meta.errors.length}>
+									Color de etiqueta
+								</FormLabel>
+								<div className="flex flex-wrap gap-4 pt-2">
+									<FormControl error={!!field.state.meta.errors.length}>
+										{/* Wrapper div acting as 'control' visually, though buttons are the inputs */}
+
+										{CATEGORY_COLORS.map((color) => (
+											<button
+												key={color}
+												type="button"
+												onClick={() => field.handleChange(color)}
+												className={clsx(
+													"h-12 w-12 rounded-full border-2 transition-all",
+													field.state.value === color
+														? "border-blue-600 scale-110"
+														: "border-transparent hover:scale-105",
+												)}
+												style={{ backgroundColor: color }}
+												aria-label={`Select color ${color}`}
+											/>
+										))}
+									</FormControl>
+								</div>
+								<FormMessage>
+									{field.state.meta.errors
+										.map((e: { message: string } | undefined) => e?.message)
+										.join(", ")}
+								</FormMessage>
+							</FormItem>
+						)}
+					</form.Field>
 				</div>
 			</DialogContent>
 		</Dialog>
