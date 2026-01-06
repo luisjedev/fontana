@@ -103,7 +103,8 @@ export default defineSchema({
     kitchenName: v.optional(v.string()), // Internal name if different
     allergens: v.optional(v.array(v.id("allergens"))),
     isArchived: v.optional(v.boolean()),
-  }),
+  })
+    .index("by_name", ["name"]),
 
   // 3. (Deleted: Logic/Rules removed for Simplicity)
 

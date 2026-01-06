@@ -6,12 +6,16 @@
 We use a modern, high-performance stack designed for speed and developer experience.
 
 *   **Core**: React 19 (RC), Vite 7, TypeScript 5.7+
+    *   **React Compiler**: Enabled via `babel-plugin-react-compiler` for automatic memoization.
 *   **Fullstack / SSR**: `@tanstack/react-start` (SSR/Hybrid ready)
 *   **Routing**: `@tanstack/react-router` (File-based routing in `src/routes`)
 *   **State Management**:
     *   `convex`: Backend-as-a-Service & Real-time Database.
     *   `@tanstack/react-query`: Async server state & caching.
     *   `zustand`: Lightweight global client state.
+*   **Form Management**:
+    *   `@tanstack/react-form`: Headless form logic.
+    *   `zod`: Schema validation (standard adapter).
 *   **Styling**:
     *   Tailwind CSS 4 (Zero-config, CSS-first).
     *   **Shadcn UI**: Component library (Radix UI + Tailwind).
@@ -50,3 +54,4 @@ src/
 ## 4. Conventions
 *   **Mobile-First**: Designs must handle small screens (collapsible sidebars, drawers) by default.
 *   **Strict Types**: No `any`. Biome handles strict linting.
+*   **Logic Extraction**: avoid writing heavy logic inside UI components. Use **Custom Hooks** (`useFormLogic`) to encapsulate state, effects, and mutations.

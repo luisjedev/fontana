@@ -1,5 +1,6 @@
 import { convexQuery } from "@convex-dev/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useConvex } from "convex/react";
 import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateIngredientModal } from "@/features/admin/ingredients/components/create-ingredient-modal";
@@ -13,6 +14,7 @@ import type { Ingredient } from "@/shared/types";
 import { api } from "../../../../convex/_generated/api";
 
 export function IngredientsView() {
+	const convex = useConvex();
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(
 		null,
@@ -30,9 +32,35 @@ export function IngredientsView() {
 
 	const { data: allergens } = useQuery(convexQuery(api.allergens.list, {}));
 
-	const { data: ingredients, isLoading: isLoadingIngredients } = useQuery(
-		convexQuery(api.ingredients.list, { search: debouncedSearchQuery }),
-	);
+	const {
+		data,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isLoading: isLoadingIngredients,
+	} = useInfiniteQuery({
+		queryKey: ["ingredients", debouncedSearchQuery],
+		queryFn: async ({
+			pageParam,
+		}): Promise<{
+			page: Ingredient[];
+			isDone: boolean;
+			continueCursor: string;
+		}> => {
+			return convex.query(api.ingredients.list, {
+				search: debouncedSearchQuery || undefined,
+				paginationOpts: {
+					numItems: 5,
+					cursor: pageParam as string | null,
+				},
+			});
+		},
+		initialPageParam: null as string | null,
+		getNextPageParam: (lastPage) =>
+			lastPage.isDone ? null : lastPage.continueCursor,
+	});
+
+	const ingredients = data?.pages.flatMap((page) => page.page) ?? [];
 
 	const handleEdit = (ingredient: Ingredient) => {
 		setEditingIngredient(ingredient);
@@ -81,13 +109,16 @@ export function IngredientsView() {
 			</div>
 
 			<div className="flex-1 overflow-auto">
-				{isLoadingIngredients || !ingredients || !allergens ? (
+				{isLoadingIngredients || !allergens ? (
 					<IngredientsListSkeleton />
 				) : (
 					<IngredientsList
 						ingredients={ingredients}
 						allergens={allergens}
 						onEdit={handleEdit}
+						hasNextPage={hasNextPage}
+						isFetchingNextPage={isFetchingNextPage}
+						fetchNextPage={fetchNextPage}
 					/>
 				)}
 			</div>

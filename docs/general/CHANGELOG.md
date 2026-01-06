@@ -10,6 +10,8 @@ For detailed feature-specific changes, see the respective feature changelogs.
 *   **Shared Types**: Consolidated domain types (User, Table, Ingredient, etc.) into `src/shared/types.ts` for consistent project-wide usage.
 *   **Icon System**: Centralized mapping for Allergen and Ingredient icons (`lucide-react`) in `src/shared/`.
 *   **Category Management**: Complete feature implementation for managing product categories (Tax, Color, Images).
+*   **React Compiler**: Integrated for automatic memoization, reducing the need for manual `useMemo`/`useCallback` optimizations.
+*   **Form Standardization**: Adopted `@tanstack/react-form` + `zod` as the standard for all complex forms (Admin).
 
 ### Changed
 *   **Auth Architecture**: Transitioned to `ConvexAuth` with a manual username/password flow, removing social providers.

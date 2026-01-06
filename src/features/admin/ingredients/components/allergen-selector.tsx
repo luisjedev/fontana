@@ -19,8 +19,8 @@ export function AllergenSelector({
 	allergens,
 }: AllergenSelectorProps) {
 	const toggleAllergen = (allergen: Allergen) => {
-		if (value.includes(allergen)) {
-			onChange(value.filter((a) => a !== allergen));
+		if (value.some((a) => a._id === allergen._id)) {
+			onChange(value.filter((a) => a._id !== allergen._id));
 		} else {
 			onChange([...value, allergen]);
 		}
@@ -44,7 +44,7 @@ export function AllergenSelector({
 
 			<div className="grid grid-cols-5 gap-2">
 				{allergens?.map((item) => {
-					const isSelected = value.includes(item);
+					const isSelected = value.some((a) => a._id === item._id);
 					const Icon = ALLERGEN_ICONS[item.name as AllergenName] || Circle;
 
 					return (

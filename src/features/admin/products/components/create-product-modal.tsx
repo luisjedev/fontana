@@ -1,9 +1,11 @@
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
+import { useForm, useStore } from "@tanstack/react-form";
+
 import { clsx } from "clsx";
 import { useMutation } from "convex/react";
 import { Check, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -12,6 +14,12 @@ import {
 	DialogDescription,
 	DialogTitle,
 } from "@/shared/components/ui/dialog";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import {
 	Select,
@@ -21,6 +29,10 @@ import {
 	SelectValue,
 } from "@/shared/components/ui/select";
 import type { Category, Ingredient, Product } from "@/shared/types";
+import {
+	getProductDefaultValues,
+	productSchema,
+} from "../hooks/use-product-form";
 
 interface CreateProductModalProps {
 	open: boolean;
@@ -30,8 +42,6 @@ interface CreateProductModalProps {
 	ingredients: Ingredient[];
 }
 
-type ProductType = "product" | "addon" | "note";
-
 export function CreateProductModal({
 	open,
 	onOpenChange,
@@ -39,163 +49,94 @@ export function CreateProductModal({
 	categories,
 	ingredients,
 }: CreateProductModalProps) {
-	const [name, setName] = useState("");
-	const [price, setPrice] = useState("0");
-	const [categoryId, setCategoryId] = useState("");
-	const [type, setType] = useState<ProductType>("product");
-	const [imageUrl, setImageUrl] = useState("");
-
-	// For Type: Product (Multiple ingredients)
-	const [selectedIngredients, setSelectedIngredients] = useState<
-		{ id: string; name: string }[]
-	>([]);
-	const [ingredientSearch, setIngredientSearch] = useState("");
-
-	// For Type: Addon (Single ingredient link)
-	const [linkedIngredientId, setLinkedIngredientId] = useState("");
-
 	const createProduct = useMutation(api.products.create);
 	const updateProduct = useMutation(api.products.update);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [ingredientSearch, setIngredientSearch] = useState("");
 
-	useEffect(() => {
-		if (open) {
-			if (product) {
-				setName(product.name);
-				setPrice(product.price.toString());
-				setCategoryId(product.categoryId);
-				setType(product.elementType as ProductType);
-				setImageUrl(product.image || "");
+	// Memeize default values to prevent unstable form instance if that logic exists, and for effect deps
+	const defaultValues = getProductDefaultValues(product, ingredients);
 
-				if (product.elementType === "product" && product.ingredients) {
-					// Map IDs back to names for UI
-					const mapped = product.ingredients.map((pi) => {
-						const ing = ingredients.find((i) => i._id === pi.id);
-						return { id: pi.id, name: ing?.name || "Unknown" };
-					});
-					setSelectedIngredients(mapped);
-				} else {
-					setSelectedIngredients([]);
+	const form = useForm({
+		defaultValues,
+
+		validators: {
+			onChange: productSchema,
+		},
+		onSubmit: async ({ value }) => {
+			let finalIngredients: { id: Id<"ingredients">; quantity: number }[] = [];
+
+			if (value.type === "product") {
+				finalIngredients = value.selectedIngredients.map((i) => ({
+					id: i.id as Id<"ingredients">,
+					quantity: 1,
+				}));
+			} else if (value.type === "addon") {
+				if (value.linkedIngredientId) {
+					finalIngredients = [
+						{
+							id: value.linkedIngredientId as Id<"ingredients">,
+							quantity: 1,
+						},
+					];
 				}
-
-				if (
-					product.elementType === "addon" &&
-					product.ingredients &&
-					product.ingredients.length > 0
-				) {
-					setLinkedIngredientId(product.ingredients[0].id);
-				} else {
-					setLinkedIngredientId("");
-				}
-			} else {
-				// Reset defaults
-				setName("");
-				setPrice("0");
-				setCategoryId("");
-				setType("product");
-				setImageUrl("");
-				setSelectedIngredients([]);
-				setLinkedIngredientId("");
 			}
-		}
-	}, [open, product, ingredients]);
 
-	// Filter ingredients for search
+			try {
+				const payload = {
+					name: value.name,
+					price: Number(value.price),
+					categoryId: value.categoryId as Id<"categories">,
+					elementType: value.type,
+					image: value.imageUrl || undefined,
+					ingredients:
+						finalIngredients.length > 0 ? finalIngredients : undefined,
+					isActive: true,
+				};
+
+				if (product) {
+					await updateProduct({
+						id: product._id as Id<"products">,
+						...payload,
+					});
+					toast.success("Producto actualizado correctamente");
+				} else {
+					await createProduct(payload);
+					toast.success("Producto creado correctamente");
+				}
+				form.reset();
+				onOpenChange(false);
+			} catch (error) {
+				toast.error(
+					product
+						? "Error al actualizar el producto"
+						: "Error al crear el producto",
+				);
+				console.error(error);
+			}
+		},
+	});
+
+	// Reactive values from the form store
+	const type = useStore(form.store, (state) => state.values.type);
+	const selectedIngredients = useStore(
+		form.store,
+		(state) => state.values.selectedIngredients,
+	);
+	const linkedIngredientId = useStore(
+		form.store,
+		(state) => state.values.linkedIngredientId,
+	);
+
+	// Filtering logic
 	const filteredIngredients = ingredients.filter(
 		(i) =>
 			i.name.toLowerCase().includes(ingredientSearch.toLowerCase()) &&
-			!selectedIngredients.some((si) => si.id === i._id),
+			!selectedIngredients.some((si: { id: string }) => si.id === i._id),
 	);
 
-	// Filter for Addon mode (just name match)
 	const filteredAddonIngredients = ingredients.filter((i) =>
 		i.name.toLowerCase().includes(ingredientSearch.toLowerCase()),
 	);
-
-	const handleAddIngredient = (ing: Ingredient) => {
-		setSelectedIngredients([
-			...selectedIngredients,
-			{ id: ing._id, name: ing.name },
-		]);
-		setIngredientSearch("");
-	};
-
-	const handleRemoveIngredient = (id: string) => {
-		setSelectedIngredients(selectedIngredients.filter((i) => i.id !== id));
-	};
-
-	const handleSelectAddonIngredient = (ing: Ingredient) => {
-		setLinkedIngredientId(ing._id);
-		setName(ing.name);
-		setIngredientSearch("");
-	};
-
-	const handleRemoveAddonIngredient = () => {
-		setLinkedIngredientId("");
-		setName("");
-	};
-
-	const handleSave = async () => {
-		if (!name.trim()) {
-			toast.error("El nombre es requerido");
-			return;
-		}
-		if (!categoryId) {
-			toast.error("La categoría es requerida");
-			return;
-		}
-
-		// Prepare ingredients array based on type
-		let finalIngredients: { id: Id<"ingredients">; quantity: number }[] = [];
-
-		if (type === "product") {
-			// For now quantity is hardcoded to 1 as UI doesn't ask for it
-			finalIngredients = selectedIngredients.map((i) => ({
-				id: i.id as Id<"ingredients">,
-				quantity: 1,
-			}));
-		} else if (type === "addon") {
-			if (linkedIngredientId) {
-				finalIngredients = [
-					{ id: linkedIngredientId as Id<"ingredients">, quantity: 1 },
-				];
-			}
-		}
-
-		setIsSubmitting(true);
-		try {
-			const payload = {
-				name,
-				price: Number(price),
-				categoryId: categoryId as Id<"categories">,
-				elementType: type,
-				image: imageUrl || undefined,
-				ingredients: finalIngredients.length > 0 ? finalIngredients : undefined,
-				isActive: true, // Always active
-			};
-
-			if (product) {
-				await updateProduct({
-					id: product._id,
-					...payload,
-				});
-				toast.success("Producto actualizado correctamente");
-			} else {
-				await createProduct(payload);
-				toast.success("Producto creado correctamente");
-			}
-			onOpenChange(false);
-		} catch (error) {
-			toast.error(
-				product
-					? "Error al actualizar el producto"
-					: "Error al crear el producto",
-			);
-			console.error(error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -220,14 +161,22 @@ export function CreateProductModal({
 						>
 							Cancelar
 						</Button>
-						<Button
-							className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2 px-6 py-4"
-							onClick={handleSave}
-							disabled={isSubmitting}
+						<form.Subscribe
+							selector={(state) => [state.canSubmit, state.isSubmitting]}
 						>
-							<Check className="h-4 w-4" strokeWidth={2} />
-							{isSubmitting ? "Guardando..." : "Guardar Producto"}
-						</Button>
+							{([canSubmit, isSubmitting]) => (
+								<Button
+									className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2 px-6 py-4"
+									onClick={() => {
+										void form.handleSubmit();
+									}}
+									disabled={!canSubmit}
+								>
+									<Check className="h-4 w-4" strokeWidth={2} />
+									{isSubmitting ? "Guardando..." : "Guardar Producto"}
+								</Button>
+							)}
+						</form.Subscribe>
 					</div>
 				</div>
 
@@ -235,85 +184,153 @@ export function CreateProductModal({
 					<div className="gap-8">
 						<div className="space-y-8">
 							<div className="grid grid-cols-2 gap-6">
-								<div className="space-y-3">
-									<span className="text-sm font-semibold">Categoría</span>
-									<Select value={categoryId} onValueChange={setCategoryId}>
-										<SelectTrigger className="bg-white h-11">
-											<SelectValue placeholder="Seleccionar Categoría" />
-										</SelectTrigger>
-										<SelectContent>
-											{categories.map((c) => (
-												<SelectItem key={c._id} value={c._id}>
-													{c.name}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
-								<div className="space-y-3">
-									<span className="text-sm font-semibold">Tipo</span>
-									<div className="flex items-center bg-white rounded-md border p-1 h-11">
-										{(["product", "addon", "note"] as const).map((t) => (
-											<button
-												key={t}
-												onClick={() => setType(t)}
-												className={clsx(
-													"flex-1 text-sm font-medium rounded-sm py-1.5 capitalize transition-colors",
-													type === t
-														? "bg-slate-900 text-white shadow-sm"
-														: "text-muted-foreground hover:bg-gray-100",
-												)}
-												type="button"
+								<form.Field name="categoryId">
+									{(field) => (
+										<FormItem>
+											<FormLabel error={!!field.state.meta.errors.length}>
+												Categoría
+											</FormLabel>
+											<Select
+												value={field.state.value}
+												onValueChange={field.handleChange}
 											>
-												{t === "product"
-													? "Producto"
-													: t === "addon"
-														? "Extra"
-														: "Nota"}
-											</button>
-										))}
-									</div>
-								</div>
+												<FormControl error={!!field.state.meta.errors.length}>
+													<SelectTrigger className="bg-white h-11">
+														<SelectValue placeholder="Seleccionar Categoría" />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{categories.map((c) => (
+														<SelectItem key={c._id} value={c._id}>
+															{c.name}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<FormMessage>
+												{field.state.meta.errors
+													.map(
+														(e: { message: string } | undefined | null) =>
+															e?.message,
+													)
+													.join(", ")}
+											</FormMessage>
+										</FormItem>
+									)}
+								</form.Field>
+
+								<form.Field name="type">
+									{(field) => (
+										<FormItem>
+											<FormLabel>Tipo</FormLabel>
+											<FormControl>
+												<div className="flex items-center bg-white rounded-md border p-1 h-11">
+													{(["product", "addon", "note"] as const).map((t) => (
+														<button
+															key={t}
+															onClick={() => field.handleChange(t)}
+															className={clsx(
+																"flex-1 text-sm font-medium rounded-sm py-1.5 capitalize transition-colors",
+																field.state.value === t
+																	? "bg-slate-900 text-white shadow-sm"
+																	: "text-muted-foreground hover:bg-gray-100",
+															)}
+															type="button"
+														>
+															{t === "product"
+																? "Producto"
+																: t === "addon"
+																	? "Extra"
+																	: "Nota"}
+														</button>
+													))}
+												</div>
+											</FormControl>
+											<FormMessage>
+												{field.state.meta.errors
+													.map(
+														(e: { message: string } | undefined | null) =>
+															e?.message,
+													)
+													.join(", ")}
+											</FormMessage>
+										</FormItem>
+									)}
+								</form.Field>
 							</div>
 
 							{/* Name and Price Row */}
 							{type !== "addon" && (
 								<div className="grid grid-cols-[2fr_1fr] gap-6">
-									<div className="space-y-3">
-										<span className="text-sm font-semibold">
-											{type === "note"
-												? "Detalles de la Nota"
-												: "Nombre del Producto"}
-										</span>
-										<Input
-											value={name}
-											onChange={(e) => setName(e.target.value)}
-											placeholder={
-												type === "note"
-													? "Introduce el contenido de la nota..."
-													: "Nombre del producto"
-											}
-											className="bg-white h-12 text-lg"
-										/>
-									</div>
+									<form.Field name="name">
+										{(field) => (
+											<FormItem>
+												<FormLabel error={!!field.state.meta.errors.length}>
+													{type === "note"
+														? "Detalles de la Nota"
+														: "Nombre del Producto"}
+												</FormLabel>
+												<FormControl error={!!field.state.meta.errors.length}>
+													<Input
+														value={field.state.value}
+														onChange={(e) => field.handleChange(e.target.value)}
+														placeholder={
+															type === "note"
+																? "Introduce el contenido de la nota..."
+																: "Nombre del producto"
+														}
+														className="bg-white h-12 text-lg"
+													/>
+												</FormControl>
+												<FormMessage>
+													{field.state.meta.errors
+														.map(
+															(e: { message: string } | undefined | null) =>
+																e?.message,
+														)
+														.join(", ")}
+												</FormMessage>
+											</FormItem>
+										)}
+									</form.Field>
 
 									{/* Price Input (only if not note) */}
 									{type !== "note" && (
-										<div className="space-y-3">
-											<span className="text-sm font-semibold">Precio</span>
-											<div className="relative">
-												<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
-													€
-												</span>
-												<Input
-													type="number"
-													value={price}
-													onChange={(e) => setPrice(e.target.value)}
-													className="bg-white h-12 text-lg pl-8 font-bold"
-													step="0.01"
-												/>
-											</div>
-										</div>
+										<form.Field name="price">
+											{(field) => (
+												<FormItem>
+													<FormLabel error={!!field.state.meta.errors.length}>
+														Precio
+													</FormLabel>
+													<div className="relative">
+														<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
+															€
+														</span>
+														<FormControl
+															error={!!field.state.meta.errors.length}
+														>
+															<Input
+																type="number"
+																value={field.state.value}
+																onChange={(e) =>
+																	field.handleChange(e.target.value)
+																}
+																className="bg-white h-12 text-lg pl-8 font-bold"
+																step="0.01"
+															/>
+														</FormControl>
+													</div>
+													<FormMessage>
+														{field.state.meta.errors
+															.map(
+																(e: { message: string } | undefined | null) =>
+																	e?.message,
+															)
+															.join(", ")}
+													</FormMessage>
+												</FormItem>
+											)}
+										</form.Field>
 									)}
 								</div>
 							)}
@@ -325,23 +342,29 @@ export function CreateProductModal({
 										Ingredientes Base
 									</span>
 									<div className="bg-white border rounded-lg">
-										{selectedIngredients.map((ing) => (
-											<div
-												key={ing.id}
-												className="flex justify-between items-center px-4 py-3 border-b last:border-0 hover:bg-gray-50"
-											>
-												<span className="font-medium">{ing.name}</span>
-												<button
-													onClick={() => handleRemoveIngredient(ing.id)}
-													className="text-gray-400 hover:text-red-500"
-													type="button"
+										{selectedIngredients.map(
+											(ing: { id: string; name: string }) => (
+												<div
+													key={ing.id}
+													className="flex justify-between items-center px-4 py-3 border-b last:border-0 hover:bg-gray-50"
 												>
-													<X className="h-4 w-4" />
-												</button>
-											</div>
-										))}
+													<span className="font-medium">{ing.name}</span>
+													<button
+														onClick={() => {
+															form.setFieldValue(
+																"selectedIngredients",
+																(prev) => prev.filter((i) => i.id !== ing.id),
+															);
+														}}
+														className="text-gray-400 hover:text-red-500"
+														type="button"
+													>
+														<X className="h-4 w-4" />
+													</button>
+												</div>
+											),
+										)}
 										<div className="p-2 bg-gray-50 border-t">
-											{/* Simple Dropdown/Search for adding ingredients */}
 											<div className="relative">
 												<Input
 													placeholder="+ Añadir ingrediente..."
@@ -360,7 +383,13 @@ export function CreateProductModal({
 																<button
 																	key={ing._id}
 																	className="w-full text-left p-2 hover:bg-gray-100 cursor-pointer text-sm"
-																	onClick={() => handleAddIngredient(ing)}
+																	onClick={() => {
+																		form.pushFieldValue("selectedIngredients", {
+																			id: ing._id,
+																			name: ing.name,
+																		});
+																		setIngredientSearch("");
+																	}}
 																	type="button"
 																>
 																	{ing.name}
@@ -385,10 +414,17 @@ export function CreateProductModal({
 											{linkedIngredientId ? (
 												<div className="flex justify-between items-center px-4 py-3 bg-gray-50 h-12">
 													<span className="font-medium">
-														{name || "Ingrediente Seleccionado"}
+														{form.getFieldValue("name") ||
+															"Ingrediente Seleccionado"}
 													</span>
 													<button
-														onClick={handleRemoveAddonIngredient}
+														onClick={() => {
+															form.setFieldValue(
+																"linkedIngredientId",
+																undefined,
+															);
+															form.setFieldValue("name", "");
+														}}
 														className="text-gray-400 hover:text-red-500"
 														type="button"
 													>
@@ -417,9 +453,14 @@ export function CreateProductModal({
 																		<button
 																			key={ing._id}
 																			className="w-full text-left p-2 hover:bg-gray-100 cursor-pointer text-sm"
-																			onClick={() =>
-																				handleSelectAddonIngredient(ing)
-																			}
+																			onClick={() => {
+																				form.setFieldValue(
+																					"linkedIngredientId",
+																					ing._id,
+																				);
+																				form.setFieldValue("name", ing.name);
+																				setIngredientSearch("");
+																			}}
 																			type="button"
 																		>
 																			{ing.name}
@@ -434,21 +475,39 @@ export function CreateProductModal({
 										</div>
 									</div>
 
-									<div className="space-y-3">
-										<span className="text-sm font-semibold">Precio</span>
-										<div className="relative">
-											<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
-												€
-											</span>
-											<Input
-												type="number"
-												value={price}
-												onChange={(e) => setPrice(e.target.value)}
-												className="bg-white h-12 text-lg pl-8 font-bold"
-												step="0.01"
-											/>
-										</div>
-									</div>
+									<form.Field name="price">
+										{(field) => (
+											<FormItem>
+												<FormLabel error={!!field.state.meta.errors.length}>
+													Precio
+												</FormLabel>
+												<div className="relative">
+													<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
+														€
+													</span>
+													<FormControl error={!!field.state.meta.errors.length}>
+														<Input
+															type="number"
+															value={field.state.value}
+															onChange={(e) =>
+																field.handleChange(e.target.value)
+															}
+															className="bg-white h-12 text-lg pl-8 font-bold"
+															step="0.01"
+														/>
+													</FormControl>
+												</div>
+												<FormMessage>
+													{field.state.meta.errors
+														.map(
+															(e: { message: string } | undefined | null) =>
+																e?.message,
+														)
+														.join(", ")}
+												</FormMessage>
+											</FormItem>
+										)}
+									</form.Field>
 								</div>
 							)}
 						</div>
