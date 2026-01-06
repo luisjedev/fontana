@@ -1,10 +1,5 @@
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
 import { clsx } from "clsx";
-import { useMutation } from "convex/react";
 import { Check, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -21,6 +16,7 @@ import {
 	SelectValue,
 } from "@/shared/components/ui/select";
 import type { Category, Ingredient, Product } from "@/shared/types";
+import { useProductForm } from "../hooks/use-product-form";
 
 interface CreateProductModalProps {
 	open: boolean;
@@ -30,8 +26,6 @@ interface CreateProductModalProps {
 	ingredients: Ingredient[];
 }
 
-type ProductType = "product" | "addon" | "note";
-
 export function CreateProductModal({
 	open,
 	onOpenChange,
@@ -39,163 +33,36 @@ export function CreateProductModal({
 	categories,
 	ingredients,
 }: CreateProductModalProps) {
-	const [name, setName] = useState("");
-	const [price, setPrice] = useState("0");
-	const [categoryId, setCategoryId] = useState("");
-	const [type, setType] = useState<ProductType>("product");
-	const [imageUrl, setImageUrl] = useState("");
+	const {
+		formState,
+		setField,
+		ingredientSearch,
+		setIngredientSearch,
+		isSubmitting,
+		handleSubmit,
+		addIngredient,
+		removeIngredient,
+		selectAddonIngredient,
+		removeAddonIngredient,
+		filteredIngredients,
+		filteredAddonIngredients,
+	} = useProductForm({
+		open,
+		onOpenChange,
+		product,
+		categories,
+		ingredients,
+	});
 
-	// For Type: Product (Multiple ingredients)
-	const [selectedIngredients, setSelectedIngredients] = useState<
-		{ id: string; name: string }[]
-	>([]);
-	const [ingredientSearch, setIngredientSearch] = useState("");
-
-	// For Type: Addon (Single ingredient link)
-	const [linkedIngredientId, setLinkedIngredientId] = useState("");
-
-	const createProduct = useMutation(api.products.create);
-	const updateProduct = useMutation(api.products.update);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	useEffect(() => {
-		if (open) {
-			if (product) {
-				setName(product.name);
-				setPrice(product.price.toString());
-				setCategoryId(product.categoryId);
-				setType(product.elementType as ProductType);
-				setImageUrl(product.image || "");
-
-				if (product.elementType === "product" && product.ingredients) {
-					// Map IDs back to names for UI
-					const mapped = product.ingredients.map((pi) => {
-						const ing = ingredients.find((i) => i._id === pi.id);
-						return { id: pi.id, name: ing?.name || "Unknown" };
-					});
-					setSelectedIngredients(mapped);
-				} else {
-					setSelectedIngredients([]);
-				}
-
-				if (
-					product.elementType === "addon" &&
-					product.ingredients &&
-					product.ingredients.length > 0
-				) {
-					setLinkedIngredientId(product.ingredients[0].id);
-				} else {
-					setLinkedIngredientId("");
-				}
-			} else {
-				// Reset defaults
-				setName("");
-				setPrice("0");
-				setCategoryId("");
-				setType("product");
-				setImageUrl("");
-				setSelectedIngredients([]);
-				setLinkedIngredientId("");
-			}
-		}
-	}, [open, product, ingredients]);
-
-	// Filter ingredients for search
-	const filteredIngredients = ingredients.filter(
-		(i) =>
-			i.name.toLowerCase().includes(ingredientSearch.toLowerCase()) &&
-			!selectedIngredients.some((si) => si.id === i._id),
-	);
-
-	// Filter for Addon mode (just name match)
-	const filteredAddonIngredients = ingredients.filter((i) =>
-		i.name.toLowerCase().includes(ingredientSearch.toLowerCase()),
-	);
-
-	const handleAddIngredient = (ing: Ingredient) => {
-		setSelectedIngredients([
-			...selectedIngredients,
-			{ id: ing._id, name: ing.name },
-		]);
-		setIngredientSearch("");
-	};
-
-	const handleRemoveIngredient = (id: string) => {
-		setSelectedIngredients(selectedIngredients.filter((i) => i.id !== id));
-	};
-
-	const handleSelectAddonIngredient = (ing: Ingredient) => {
-		setLinkedIngredientId(ing._id);
-		setName(ing.name);
-		setIngredientSearch("");
-	};
-
-	const handleRemoveAddonIngredient = () => {
-		setLinkedIngredientId("");
-		setName("");
-	};
-
-	const handleSave = async () => {
-		if (!name.trim()) {
-			toast.error("El nombre es requerido");
-			return;
-		}
-		if (!categoryId) {
-			toast.error("La categoría es requerida");
-			return;
-		}
-
-		// Prepare ingredients array based on type
-		let finalIngredients: { id: Id<"ingredients">; quantity: number }[] = [];
-
-		if (type === "product") {
-			// For now quantity is hardcoded to 1 as UI doesn't ask for it
-			finalIngredients = selectedIngredients.map((i) => ({
-				id: i.id as Id<"ingredients">,
-				quantity: 1,
-			}));
-		} else if (type === "addon") {
-			if (linkedIngredientId) {
-				finalIngredients = [
-					{ id: linkedIngredientId as Id<"ingredients">, quantity: 1 },
-				];
-			}
-		}
-
-		setIsSubmitting(true);
-		try {
-			const payload = {
-				name,
-				price: Number(price),
-				categoryId: categoryId as Id<"categories">,
-				elementType: type,
-				image: imageUrl || undefined,
-				ingredients: finalIngredients.length > 0 ? finalIngredients : undefined,
-				isActive: true, // Always active
-			};
-
-			if (product) {
-				await updateProduct({
-					id: product._id,
-					...payload,
-				});
-				toast.success("Producto actualizado correctamente");
-			} else {
-				await createProduct(payload);
-				toast.success("Producto creado correctamente");
-			}
-			onOpenChange(false);
-		} catch (error) {
-			toast.error(
-				product
-					? "Error al actualizar el producto"
-					: "Error al crear el producto",
-			);
-			console.error(error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
+	// Destructure commonly used formState values for cleaner JSX
+	const {
+		type,
+		name,
+		price,
+		categoryId,
+		selectedIngredients,
+		linkedIngredientId,
+	} = formState;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -222,7 +89,7 @@ export function CreateProductModal({
 						</Button>
 						<Button
 							className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2 px-6 py-4"
-							onClick={handleSave}
+							onClick={handleSubmit}
 							disabled={isSubmitting}
 						>
 							<Check className="h-4 w-4" strokeWidth={2} />
@@ -237,7 +104,10 @@ export function CreateProductModal({
 							<div className="grid grid-cols-2 gap-6">
 								<div className="space-y-3">
 									<span className="text-sm font-semibold">Categoría</span>
-									<Select value={categoryId} onValueChange={setCategoryId}>
+									<Select
+										value={categoryId}
+										onValueChange={(val) => setField("categoryId", val)}
+									>
 										<SelectTrigger className="bg-white h-11">
 											<SelectValue placeholder="Seleccionar Categoría" />
 										</SelectTrigger>
@@ -256,7 +126,7 @@ export function CreateProductModal({
 										{(["product", "addon", "note"] as const).map((t) => (
 											<button
 												key={t}
-												onClick={() => setType(t)}
+												onClick={() => setField("type", t)}
 												className={clsx(
 													"flex-1 text-sm font-medium rounded-sm py-1.5 capitalize transition-colors",
 													type === t
@@ -287,7 +157,7 @@ export function CreateProductModal({
 										</span>
 										<Input
 											value={name}
-											onChange={(e) => setName(e.target.value)}
+											onChange={(e) => setField("name", e.target.value)}
 											placeholder={
 												type === "note"
 													? "Introduce el contenido de la nota..."
@@ -308,7 +178,7 @@ export function CreateProductModal({
 												<Input
 													type="number"
 													value={price}
-													onChange={(e) => setPrice(e.target.value)}
+													onChange={(e) => setField("price", e.target.value)}
 													className="bg-white h-12 text-lg pl-8 font-bold"
 													step="0.01"
 												/>
@@ -332,7 +202,7 @@ export function CreateProductModal({
 											>
 												<span className="font-medium">{ing.name}</span>
 												<button
-													onClick={() => handleRemoveIngredient(ing.id)}
+													onClick={() => removeIngredient(ing.id)}
 													className="text-gray-400 hover:text-red-500"
 													type="button"
 												>
@@ -360,7 +230,7 @@ export function CreateProductModal({
 																<button
 																	key={ing._id}
 																	className="w-full text-left p-2 hover:bg-gray-100 cursor-pointer text-sm"
-																	onClick={() => handleAddIngredient(ing)}
+																	onClick={() => addIngredient(ing)}
 																	type="button"
 																>
 																	{ing.name}
@@ -388,7 +258,7 @@ export function CreateProductModal({
 														{name || "Ingrediente Seleccionado"}
 													</span>
 													<button
-														onClick={handleRemoveAddonIngredient}
+														onClick={removeAddonIngredient}
 														className="text-gray-400 hover:text-red-500"
 														type="button"
 													>
@@ -417,9 +287,7 @@ export function CreateProductModal({
 																		<button
 																			key={ing._id}
 																			className="w-full text-left p-2 hover:bg-gray-100 cursor-pointer text-sm"
-																			onClick={() =>
-																				handleSelectAddonIngredient(ing)
-																			}
+																			onClick={() => selectAddonIngredient(ing)}
 																			type="button"
 																		>
 																			{ing.name}
@@ -443,7 +311,7 @@ export function CreateProductModal({
 											<Input
 												type="number"
 												value={price}
-												onChange={(e) => setPrice(e.target.value)}
+												onChange={(e) => setField("price", e.target.value)}
 												className="bg-white h-12 text-lg pl-8 font-bold"
 												step="0.01"
 											/>

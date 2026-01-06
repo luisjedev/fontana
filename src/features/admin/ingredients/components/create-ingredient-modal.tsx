@@ -1,8 +1,4 @@
-import { api } from "@convex/_generated/api";
-import { useMutation } from "convex/react";
 import { Check, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { AllergenSelector } from "@/features/admin/ingredients/components/allergen-selector";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -13,6 +9,7 @@ import {
 } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
 import type { Allergen, Ingredient } from "@/shared/types";
+import { useIngredientForm } from "../hooks/use-ingredient-form";
 
 interface CreateIngredientModalProps {
 	open: boolean;
@@ -27,62 +24,14 @@ export function CreateIngredientModal({
 	allergens,
 	ingredient,
 }: CreateIngredientModalProps) {
-	const [name, setName] = useState("");
-	const [allergensSelected, setAllergensSelected] = useState<Allergen[]>([]);
-	const createIngredient = useMutation(api.ingredients.create);
-	const updateIngredient = useMutation(api.ingredients.update);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	useEffect(() => {
-		if (open) {
-			if (ingredient) {
-				setName(ingredient.name);
-				// Map ingredient allergen IDs to Allergen objects
-				const selected = allergens.filter((a) =>
-					ingredient.allergens?.includes(a._id),
-				);
-				setAllergensSelected(selected);
-			} else {
-				setName("");
-				setAllergensSelected([]);
-			}
-		}
-	}, [open, ingredient, allergens]);
-
-	const handleSave = async () => {
-		if (!name.trim()) {
-			toast.error("El nombre es requerido");
-			return;
-		}
-
-		setIsSubmitting(true);
-		try {
-			if (ingredient) {
-				await updateIngredient({
-					id: ingredient._id,
-					name,
-					allergens: allergensSelected.map((a) => a._id),
-				});
-				toast.success("Ingrediente actualizado correctamente");
-			} else {
-				await createIngredient({
-					name,
-					allergens: allergensSelected.map((a) => a._id),
-				});
-				toast.success("Ingrediente creado correctamente");
-			}
-			onOpenChange(false);
-		} catch (error) {
-			toast.error(
-				ingredient
-					? "Error al actualizar el ingrediente"
-					: "Error al crear el ingrediente",
-			);
-			console.error(error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
+	const { formState, setField, handleSubmit, isSubmitting } = useIngredientForm(
+		{
+			open,
+			onOpenChange,
+			allergens,
+			ingredient,
+		},
+	);
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -108,7 +57,7 @@ export function CreateIngredientModal({
 						</Button>
 						<Button
 							className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2 p-6"
-							onClick={handleSave}
+							onClick={handleSubmit}
 							disabled={isSubmitting}
 						>
 							<Check className="h-4 w-4" strokeWidth={2} />
@@ -124,8 +73,8 @@ export function CreateIngredientModal({
 						</span>
 						<div className="relative pt-2">
 							<Input
-								value={name}
-								onChange={(e) => setName(e.target.value)}
+								value={formState.name}
+								onChange={(e) => setField("name", e.target.value)}
 								placeholder="e.j Cebolla crujiente"
 								className="h-14 text-lg px-4 bg-white"
 							/>
@@ -134,8 +83,8 @@ export function CreateIngredientModal({
 					</div>
 					<AllergenSelector
 						allergens={allergens}
-						value={allergensSelected}
-						onChange={setAllergensSelected}
+						value={formState.allergensSelected}
+						onChange={(val) => setField("allergensSelected", val)}
 					/>
 				</div>
 			</DialogContent>

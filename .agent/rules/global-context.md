@@ -23,7 +23,7 @@ The project uses a modern high-performance stack:
   - Icons: `lucide-react`
   - Animations: `tw-animate-css`
 - **Code Quality**:
-  - **Biome**: Replaces ESLint and Prettier. Commands: `pnpm check`, `pnpm format`.
+  - **Biome**: Replaces ESLint and Prettier. Commands: `pnpm biome check --write src`
 
 ## 2. 🏰 Architecture (Screaming Architecture)
 

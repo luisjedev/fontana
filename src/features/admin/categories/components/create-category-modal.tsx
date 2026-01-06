@@ -1,9 +1,5 @@
-import { api } from "@convex/_generated/api";
 import { clsx } from "clsx";
-import { useMutation } from "convex/react";
 import { Check } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -20,22 +16,13 @@ import {
 	SelectValue,
 } from "@/shared/components/ui/select";
 import type { Category } from "@/shared/types";
+import { CATEGORY_COLORS, useCategoryForm } from "../hooks/use-category-form";
 
 interface CreateCategoryModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	category?: Category | null;
 }
-
-const CATEGORY_COLORS = [
-	"#DBEAFE", // blue-100
-	"#DCFCE7", // green-100
-	"#FFEDD5", // orange-100
-	"#F3E8FF", // purple-100
-	"#FCE7F3", // pink-100
-	"#FFE4E6", // rose-100
-	"#FEF9C3", // yellow-100
-];
 
 const TAX_OPTIONS = [
 	{ value: "0", label: "0%" },
@@ -49,69 +36,11 @@ export function CreateCategoryModal({
 	onOpenChange,
 	category,
 }: CreateCategoryModalProps) {
-	const [name, setName] = useState("");
-	const [taxPercent, setTaxPercent] = useState("10");
-	const [selectedColor, setSelectedColor] = useState(CATEGORY_COLORS[0]);
-	const [imageUrl, setImageUrl] = useState("");
-
-	const createCategory = useMutation(api.categories.create);
-	const updateCategory = useMutation(api.categories.update);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	useEffect(() => {
-		if (open) {
-			if (category) {
-				setName(category.name);
-				setTaxPercent(category.tax_percent.toString());
-				setSelectedColor(category.tag_color || CATEGORY_COLORS[0]);
-				setImageUrl(category.image || "");
-			} else {
-				setName("");
-				setTaxPercent("10");
-				setSelectedColor(CATEGORY_COLORS[0]);
-				setImageUrl("");
-			}
-		}
-	}, [open, category]);
-
-	const handleSave = async () => {
-		if (!name.trim()) {
-			toast.error("El nombre es requerido");
-			return;
-		}
-
-		setIsSubmitting(true);
-		try {
-			if (category) {
-				await updateCategory({
-					id: category._id,
-					name,
-					tax_percent: Number(taxPercent),
-					tag_color: selectedColor,
-					image: imageUrl || undefined,
-				});
-				toast.success("Categoría actualizada correctamente");
-			} else {
-				await createCategory({
-					name,
-					tax_percent: Number(taxPercent),
-					tag_color: selectedColor,
-					image: imageUrl || undefined,
-				});
-				toast.success("Categoría creada correctamente");
-			}
-			onOpenChange(false);
-		} catch (error) {
-			toast.error(
-				category
-					? "Error al actualizar la categoría"
-					: "Error al crear la categoría",
-			);
-			console.error(error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
+	const { formState, setField, handleSubmit, isSubmitting } = useCategoryForm({
+		open,
+		onOpenChange,
+		category,
+	});
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -137,7 +66,7 @@ export function CreateCategoryModal({
 						</Button>
 						<Button
 							className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2 p-6"
-							onClick={handleSave}
+							onClick={handleSubmit}
 							disabled={isSubmitting}
 						>
 							<Check className="h-4 w-4" strokeWidth={2} />
@@ -154,8 +83,8 @@ export function CreateCategoryModal({
 							</span>
 							<div className="relative pt-2">
 								<Input
-									value={name}
-									onChange={(e) => setName(e.target.value)}
+									value={formState.name}
+									onChange={(e) => setField("name", e.target.value)}
 									placeholder="e.j. Desayunos"
 									className="text-lg px-4 bg-white"
 								/>
@@ -166,7 +95,10 @@ export function CreateCategoryModal({
 								Porcentaje de Impuesto
 							</span>
 							<div className="relative pt-2">
-								<Select value={taxPercent} onValueChange={setTaxPercent}>
+								<Select
+									value={formState.taxPercent}
+									onValueChange={(value) => setField("taxPercent", value)}
+								>
 									<SelectTrigger className="h-14 text-lg px-4 bg-white w-full">
 										<SelectValue placeholder="Seleccionar %" />
 									</SelectTrigger>
@@ -191,10 +123,10 @@ export function CreateCategoryModal({
 								<button
 									key={color}
 									type="button"
-									onClick={() => setSelectedColor(color)}
+									onClick={() => setField("selectedColor", color)}
 									className={clsx(
 										"h-12 w-12 rounded-full border-2 transition-all",
-										selectedColor === color
+										formState.selectedColor === color
 											? "border-blue-600 scale-110"
 											: "border-transparent hover:scale-105",
 									)}
