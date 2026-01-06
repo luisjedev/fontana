@@ -50,3 +50,4 @@ src/
 ## 4. Conventions
 *   **Mobile-First**: Designs must handle small screens (collapsible sidebars, drawers) by default.
 *   **Strict Types**: No `any`. Biome handles strict linting.
+*   **Logic Extraction**: avoid writing heavy logic inside UI components. Use **Custom Hooks** (`useFormLogic`) to encapsulate state, effects, and mutations.

@@ -34,3 +34,11 @@
     *   **UX**: Added Skeleton loaders and stable keys for better loading states.
     *   **Layout**: Updated Ingredients List to use equal column widths (grid-cols-3).
 *   **Mutations**: Added `update` mutation for `ingredients` and `products`.
+
+## 2026-01-06 - Logic Refactor & Custom Hooks
+### Changed
+*   **Refactoring**: Extracted business logic from `create-category-modal`, `create-ingredient-modal`, and `create-product-modal` to dedicated custom hooks.
+    *   `useCategoryForm`: Handles category state and mutations.
+    *   `useIngredientForm`: Manages ingredient name and allergen map.
+    *   `useProductForm`: Complex state machine for switching between Product/Addon/Note types and managing ingredient lists.
+*   **Architecture**: Enforced separation of concerns. UI components now purely render view state provided by hooks.

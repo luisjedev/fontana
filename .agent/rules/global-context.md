@@ -24,6 +24,7 @@ The project uses a modern high-performance stack:
   - Animations: `tw-animate-css`
 - **Code Quality**:
   - **Biome**: Replaces ESLint and Prettier. Commands: `pnpm biome check --write src`
+- **knowlege**: uses context7 and his MCP to know which you need for doing the job
 
 ## 2. 🏰 Architecture (Screaming Architecture)
 

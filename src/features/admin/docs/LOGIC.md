@@ -23,6 +23,12 @@ src/features/admin/
 *   **`products/`**: The sellable layer. Defines what appears on the POS. It references ingredients for consumption tracking.
 *   **`categories/`**: The organizational layer. Defines how products are grouped in the UI.
 
+### Internal Pattern (UI/Logic Separation)
+We use a strict **Hook-Component Separation** for complex forms and logic-heavy views:
+*   **Components (`components/*.tsx`)**: Pure UI. They receive data/handlers via props or use the custom hook directly if top-level. They should contain **zero** direct `useMutation` or complex `useEffect`.
+*   **Hooks (`hooks/*.ts`)**: Encapsulate all business logic, state management, validations, and backend interactions (Convex).
+    *   *Example*: `useProductForm` handles the state machine for Product/Addon/Note types, while `CreateProductModal` just renders inputs.
+
 ---
 
 ## 3. Data Model Strategy (v3 - "Flat & Clean")
