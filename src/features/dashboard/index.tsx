@@ -1,20 +1,19 @@
-import { api } from "@convex/_generated/api";
-import { convexQuery } from "@convex-dev/react-query";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { MainPanel } from "@/features/dashboard/components/main-panel/main-panel";
 import { Sidebar } from "@/features/dashboard/components/sidebar/sidebar";
+import {
+	useTables,
+	useWaitlist,
+} from "@/features/dashboard/hooks/use-dashboard-data";
 import { Button } from "@/shared/components/ui/button";
 
 type MobileView = "sidebar" | "main";
 
 export function DashboardView() {
 	const [activeView, setActiveView] = useState<MobileView>("sidebar");
-	const { data: tables } = useSuspenseQuery(convexQuery(api.tables.list, {}));
-	const { data: waitlist } = useSuspenseQuery(
-		convexQuery(api.waitlist.list, {}),
-	);
+	const tables = useTables();
+	const waitlist = useWaitlist();
 
 	const toggleView = () => {
 		setActiveView((prev) => (prev === "sidebar" ? "main" : "sidebar"));
