@@ -42,3 +42,8 @@
     *   `useIngredientForm`: Manages ingredient name and allergen map.
     *   `useProductForm`: Complex state machine for switching between Product/Addon/Note types and managing ingredient lists.
 *   **Architecture**: Enforced separation of concerns. UI components now purely render view state provided by hooks.
+
+## 2026-01-11 - Category Modal Crash Fix
+### Fixed
+*   **Category Management**: Fixed a crash when opening the create/edit category modal caused by `FormControl` (Radix `Slot`) receiving multiple children.
+*   **Category Management**: Fixed validation error rendering showing `[object Object]` instead of a human-readable message.

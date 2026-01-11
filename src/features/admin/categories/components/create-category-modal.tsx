@@ -27,6 +27,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/components/ui/select";
+import { formatFieldErrors } from "@/shared/lib/utils";
 import type { Category } from "@/shared/types";
 import {
 	CATEGORY_COLORS,
@@ -156,7 +157,7 @@ export function CreateCategoryModal({
 										</FormControl>
 									</div>
 									<FormMessage>
-										{field.state.meta.errors.join(", ")}
+										{formatFieldErrors(field.state.meta.errors)}
 									</FormMessage>
 								</FormItem>
 							)}
@@ -188,7 +189,7 @@ export function CreateCategoryModal({
 										</Select>
 									</div>
 									<FormMessage>
-										{field.state.meta.errors.join(", ")}
+										{formatFieldErrors(field.state.meta.errors)}
 									</FormMessage>
 								</FormItem>
 							)}
@@ -201,10 +202,8 @@ export function CreateCategoryModal({
 								<FormLabel error={!!field.state.meta.errors.length}>
 									Color de etiqueta
 								</FormLabel>
-								<div className="flex flex-wrap gap-4 pt-2">
-									<FormControl error={!!field.state.meta.errors.length}>
-										{/* Wrapper div acting as 'control' visually, though buttons are the inputs */}
-
+								<FormControl error={!!field.state.meta.errors.length}>
+									<div className="flex flex-wrap gap-4 pt-2">
 										{CATEGORY_COLORS.map((color) => (
 											<button
 												key={color}
@@ -220,12 +219,10 @@ export function CreateCategoryModal({
 												aria-label={`Select color ${color}`}
 											/>
 										))}
-									</FormControl>
-								</div>
+									</div>
+								</FormControl>
 								<FormMessage>
-									{field.state.meta.errors
-										.map((e: { message: string } | undefined) => e?.message)
-										.join(", ")}
+									{formatFieldErrors(field.state.meta.errors)}
 								</FormMessage>
 							</FormItem>
 						)}

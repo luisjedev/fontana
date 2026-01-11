@@ -9,8 +9,7 @@ import { TableList } from "@/features/dashboard/components/tables/table-list";
 import { WaitlistBar } from "@/features/dashboard/components/waitlist/waitlist-bar";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
-
-type TableStatus = "pending" | "waiting" | "code3" | "served";
+import type { TableStatus } from "@/shared/types";
 
 interface MainPanelProps {
 	tables: Doc<"tables">[] | undefined;

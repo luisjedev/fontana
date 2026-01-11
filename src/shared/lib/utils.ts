@@ -5,6 +5,26 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
+export function formatFieldErrors(errors: readonly unknown[]) {
+	return errors
+		.map((error) => {
+			if (typeof error === "string") {
+				return error;
+			}
+
+			if (error && typeof error === "object" && "message" in error) {
+				const message = (error as { message?: unknown }).message;
+				if (typeof message === "string") {
+					return message;
+				}
+			}
+
+			return "";
+		})
+		.filter(Boolean)
+		.join(", ");
+}
+
 export function formatTimeAgo(timestamp: number) {
 	const diff = Date.now() - timestamp;
 	const minutes = Math.floor(diff / 60000);

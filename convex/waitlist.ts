@@ -1,6 +1,10 @@
 import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
 
+function getTodayDateString(): string {
+  return new Date().toISOString().split('T')[0]
+}
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -18,7 +22,7 @@ export const add = mutation({
     const now = Date.now()
 
     if (count === 0) {
-      const today = new Date().toISOString().split('T')[0]
+      const today = getTodayDateString()
       const dailyMetric = await ctx.db
         .query('metrics_daily_queue')
         .withIndex('by_day', (q) => q.eq('day', today))
@@ -54,7 +58,7 @@ export const remove = mutation({
     if (!item) return // Already deleted?
 
     const count = (await ctx.db.query('waitlist').collect()).length
-    const today = new Date().toISOString().split('T')[0]
+    const today = getTodayDateString()
 
     // Handle Conversion Metrics & Wait Duration
     if (args.outcome) {

@@ -1,4 +1,3 @@
-import type { Id } from "@convex/_generated/dataModel";
 import {
 	CircleCheck,
 	HandPlatter,
@@ -16,15 +15,7 @@ import {
 } from "@/shared/components/ui/dialog";
 import { Separator } from "@/shared/components/ui/separator";
 import { cn } from "@/shared/lib/utils";
-
-type TableStatus = "pending" | "waiting" | "code3" | "served";
-
-interface Table {
-	_id: Id<"tables">;
-	tableNumber: number;
-	status: string;
-	statusUpdatedAt: number;
-}
+import type { Table, TableStatus } from "@/shared/types";
 
 interface TableActionsModalProps {
 	table: Table | null | undefined;
