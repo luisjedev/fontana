@@ -8,6 +8,49 @@ const STATUS_ORDER: Record<string, number> = {
   served: 4,
 }
 
+const tableStatusValidator = v.union(
+  v.literal("pending"),
+  v.literal("code3"),
+  v.literal("waiting"),
+  v.literal("served")
+)
+
+type TableStatus = "pending" | "code3" | "waiting" | "served"
+
+interface TableDoc {
+  status: TableStatus
+  statusUpdatedAt: number
+  pendingDuration?: number
+  waitingDuration?: number
+  paymentDuration?: number
+}
+
+/**
+ * Calculate duration updates when transitioning from one status to another.
+ * Returns the accumulated duration for the previous status.
+ */
+function calculateDurationUpdate(
+  existing: TableDoc,
+  now: number
+): Partial<TableDoc> {
+  const duration = Math.round((now - existing.statusUpdatedAt) / 1000)
+
+  switch (existing.status) {
+    case 'pending':
+      return { pendingDuration: (existing.pendingDuration || 0) + duration }
+    case 'waiting':
+      return { waitingDuration: (existing.waitingDuration || 0) + duration }
+    case 'code3':
+      return { paymentDuration: (existing.paymentDuration || 0) + duration }
+    default:
+      return {}
+  }
+}
+
+function getTodayDateString(): string {
+  return new Date().toISOString().split('T')[0]
+}
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -41,12 +84,7 @@ export const list = query({
 export const create = mutation({
   args: {
     tableNumber: v.number(),
-    status: v.union(
-      v.literal("pending"),
-      v.literal("code3"),
-      v.literal("waiting"),
-      v.literal("served")
-    ),
+    status: tableStatusValidator,
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -61,34 +99,25 @@ export const create = mutation({
         )
       }
 
-      // Update Logic (Same as Upsert)
       const now = Date.now()
-      const updates: any = { status: args.status, statusUpdatedAt: now }
+      const durationUpdates = calculateDurationUpdate(existing as TableDoc, now)
+      const shouldResetTimer = existing.status === 'served' && args.status !== 'served'
 
-      // Timer Logic
-      if (existing.status === 'served' && args.status !== 'served') {
-        updates.timerStartTime = now
-      }
-
-      const duration = Math.round((now - existing.statusUpdatedAt) / 1000)
-
-      if (existing.status === 'pending') {
-        updates.pendingDuration = (existing.pendingDuration || 0) + duration
-      } else if (existing.status === 'waiting') {
-        updates.waitingDuration = (existing.waitingDuration || 0) + duration
-      } else if (existing.status === 'code3') {
-        updates.paymentDuration = (existing.paymentDuration || 0) + duration
-      }
-
-      await ctx.db.patch(existing._id, updates)
+      await ctx.db.patch(existing._id, {
+        status: args.status,
+        statusUpdatedAt: now,
+        ...durationUpdates,
+        ...(shouldResetTimer && { timerStartTime: now }),
+      })
       return { action: 'updated' }
     }
 
+    const now = Date.now()
     await ctx.db.insert('tables', {
       tableNumber: args.tableNumber,
       status: args.status,
-      statusUpdatedAt: Date.now(),
-      timerStartTime: Date.now(),
+      statusUpdatedAt: now,
+      timerStartTime: now,
     })
     return { action: 'created' }
   },
@@ -97,12 +126,7 @@ export const create = mutation({
 export const upsert = mutation({
   args: {
     tableNumber: v.number(),
-    status: v.union(
-      v.literal("pending"),
-      v.literal("code3"),
-      v.literal("waiting"),
-      v.literal("served")
-    )
+    status: tableStatusValidator,
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -113,36 +137,16 @@ export const upsert = mutation({
     const now = Date.now()
 
     if (existing) {
-      // Update
-      const updates: any = { status: args.status, statusUpdatedAt: now }
+      const durationUpdates = calculateDurationUpdate(existing as TableDoc, now)
+      const shouldResetTimer = existing.status === 'served' && args.status !== 'served'
 
-      // Timer Logic:
-      // 1. If moving FROM Served layer to any other layer -> Reset timer (New Cycle)
-      if (existing.status === 'served' && args.status !== 'served') {
-        updates.timerStartTime = now
-      }
-      // 2. If existing timerStartTime is missing (legacy/migration), set it?
-      // No, frontend will fallback to _creationTime if missing.
-      
-      // Calculate duration spent in the PREVIOUS state
-      const duration = Math.round((now - existing.statusUpdatedAt) / 1000)
-      
-      if (existing.status === 'pending') {
-         updates.pendingDuration = (existing.pendingDuration || 0) + duration
-      } else if (existing.status === 'waiting') {
-         updates.waitingDuration = (existing.waitingDuration || 0) + duration
-      } else if (existing.status === 'code3') {
-         updates.paymentDuration = (existing.paymentDuration || 0) + duration
-      } else if (existing.status === 'served') {
-         // Optionally track servedDuration
-         // updates.servedDuration = (existing.servedDuration || 0) + duration
-      }
-
-      // Special triggers (None for now)
-      
-      await ctx.db.patch(existing._id, updates)
+      await ctx.db.patch(existing._id, {
+        status: args.status,
+        statusUpdatedAt: now,
+        ...durationUpdates,
+        ...(shouldResetTimer && { timerStartTime: now }),
+      })
     } else {
-      // Create
       await ctx.db.insert('tables', {
         tableNumber: args.tableNumber,
         status: args.status,
@@ -163,40 +167,31 @@ export const remove = mutation({
       .withIndex('by_number', (q) => q.eq('tableNumber', args.tableNumber))
       .first()
 
-    if (existing) {
-      const now = Date.now()
-      const createdAt = existing._creationTime
-      // Calculate Total Duration
-      const duration = Math.round((now - createdAt) / 1000)
+    if (!existing) return
 
-      // Calculate final partial duration for current state
-      const currentDuration = Math.round((now - existing.statusUpdatedAt) / 1000)
-      
-      let pendingDuration = existing.pendingDuration || 0
-      let waitingDuration = existing.waitingDuration || 0
-      let paymentDuration = existing.paymentDuration || 0
+    const now = Date.now()
+    const totalDuration = Math.round((now - existing._creationTime) / 1000)
+    const currentStateDuration = Math.round((now - existing.statusUpdatedAt) / 1000)
 
-      if (existing.status === 'pending') {
-        pendingDuration += currentDuration
-      } else if (existing.status === 'waiting') {
-        waitingDuration += currentDuration
-      } else if (existing.status === 'code3') {
-        paymentDuration += currentDuration
-      }
+    // Calculate final durations including time in current state
+    let pendingDuration = existing.pendingDuration || 0
+    let waitingDuration = existing.waitingDuration || 0
+    let paymentDuration = existing.paymentDuration || 0
 
-      // Store metric
-      const today = new Date().toISOString().split('T')[0]
-      await ctx.db.insert('metrics_tables', {
-        tableNumber: existing.tableNumber,
-        day: today,
-        duration,
-        pendingDuration: pendingDuration > 0 ? pendingDuration : undefined,
-        waitingDuration: waitingDuration > 0 ? waitingDuration : undefined,
-        paymentDuration: paymentDuration > 0 ? paymentDuration : undefined,
-        endedAt: now,
-      })
+    if (existing.status === 'pending') pendingDuration += currentStateDuration
+    else if (existing.status === 'waiting') waitingDuration += currentStateDuration
+    else if (existing.status === 'code3') paymentDuration += currentStateDuration
 
-      await ctx.db.delete(existing._id)
-    }
+    await ctx.db.insert('metrics_tables', {
+      tableNumber: existing.tableNumber,
+      day: getTodayDateString(),
+      duration: totalDuration,
+      pendingDuration: pendingDuration > 0 ? pendingDuration : undefined,
+      waitingDuration: waitingDuration > 0 ? waitingDuration : undefined,
+      paymentDuration: paymentDuration > 0 ? paymentDuration : undefined,
+      endedAt: now,
+    })
+
+    await ctx.db.delete(existing._id)
   },
 })

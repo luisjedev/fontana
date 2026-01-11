@@ -1,7 +1,6 @@
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { useForm, useStore } from "@tanstack/react-form";
-
 import { clsx } from "clsx";
 import { useMutation } from "convex/react";
 import { Check, X } from "lucide-react";
@@ -28,11 +27,18 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/components/ui/select";
+import { formatFieldErrors } from "@/shared/lib/utils";
 import type { Category, Ingredient, Product } from "@/shared/types";
 import {
 	getProductDefaultValues,
 	productSchema,
 } from "../hooks/use-product-form";
+
+const TYPE_LABELS: Record<"product" | "addon" | "note", string> = {
+	product: "Producto",
+	addon: "Extra",
+	note: "Nota",
+};
 
 interface CreateProductModalProps {
 	open: boolean;
@@ -208,12 +214,7 @@ export function CreateProductModal({
 												</SelectContent>
 											</Select>
 											<FormMessage>
-												{field.state.meta.errors
-													.map(
-														(e: { message: string } | undefined | null) =>
-															e?.message,
-													)
-													.join(", ")}
+												{formatFieldErrors(field.state.meta.errors)}
 											</FormMessage>
 										</FormItem>
 									)}
@@ -237,22 +238,13 @@ export function CreateProductModal({
 															)}
 															type="button"
 														>
-															{t === "product"
-																? "Producto"
-																: t === "addon"
-																	? "Extra"
-																	: "Nota"}
+															{TYPE_LABELS[t]}
 														</button>
 													))}
 												</div>
 											</FormControl>
 											<FormMessage>
-												{field.state.meta.errors
-													.map(
-														(e: { message: string } | undefined | null) =>
-															e?.message,
-													)
-													.join(", ")}
+												{formatFieldErrors(field.state.meta.errors)}
 											</FormMessage>
 										</FormItem>
 									)}
@@ -283,12 +275,7 @@ export function CreateProductModal({
 													/>
 												</FormControl>
 												<FormMessage>
-													{field.state.meta.errors
-														.map(
-															(e: { message: string } | undefined | null) =>
-																e?.message,
-														)
-														.join(", ")}
+													{formatFieldErrors(field.state.meta.errors)}
 												</FormMessage>
 											</FormItem>
 										)}
@@ -321,12 +308,7 @@ export function CreateProductModal({
 														</FormControl>
 													</div>
 													<FormMessage>
-														{field.state.meta.errors
-															.map(
-																(e: { message: string } | undefined | null) =>
-																	e?.message,
-															)
-															.join(", ")}
+														{formatFieldErrors(field.state.meta.errors)}
 													</FormMessage>
 												</FormItem>
 											)}
@@ -498,12 +480,7 @@ export function CreateProductModal({
 													</FormControl>
 												</div>
 												<FormMessage>
-													{field.state.meta.errors
-														.map(
-															(e: { message: string } | undefined | null) =>
-																e?.message,
-														)
-														.join(", ")}
+													{formatFieldErrors(field.state.meta.errors)}
 												</FormMessage>
 											</FormItem>
 										)}

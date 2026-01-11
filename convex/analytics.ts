@@ -1,9 +1,13 @@
 import { query } from './_generated/server'
 
+function getTodayDateString(): string {
+  return new Date().toISOString().split('T')[0]
+}
+
 export const getTodayMetrics = query({
   args: {},
   handler: async (ctx) => {
-    const today = new Date().toISOString().split('T')[0]
+    const today = getTodayDateString()
 
     // 1. Fetch Daily Queue Metrics
     const queueMetric = await ctx.db

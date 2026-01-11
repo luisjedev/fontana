@@ -19,6 +19,7 @@ import {
 	FormMessage,
 } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
+import { formatFieldErrors } from "@/shared/lib/utils";
 import type { Allergen, Ingredient } from "@/shared/types";
 import {
 	getIngredientDefaultValues,
@@ -138,9 +139,7 @@ export function CreateIngredientModal({
 									<Pencil className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
 								</div>
 								<FormMessage>
-									{field.state.meta.errors
-										.map((e: { message: string } | undefined) => e?.message)
-										.join(", ")}
+									{formatFieldErrors(field.state.meta.errors)}
 								</FormMessage>
 							</FormItem>
 						)}
@@ -157,9 +156,7 @@ export function CreateIngredientModal({
 									/>
 								</FormControl>
 								<FormMessage>
-									{field.state.meta.errors
-										.map((e: { message: string } | undefined) => e?.message)
-										.join(", ")}
+									{formatFieldErrors(field.state.meta.errors)}
 								</FormMessage>
 							</FormItem>
 						)}

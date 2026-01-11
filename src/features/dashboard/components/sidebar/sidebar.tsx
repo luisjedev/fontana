@@ -3,6 +3,7 @@ import {
 	Bell,
 	CircleCheck,
 	LayoutGrid,
+	type LucideIcon,
 	PieChart,
 	Plus,
 	ReceiptEuro,
@@ -17,13 +18,62 @@ import { Tabs, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { cn } from "@/shared/lib/utils";
 import type { SidebarMode, TableStatus } from "@/shared/types";
 
+interface StatusButtonConfig {
+	status: TableStatus;
+	icon: LucideIcon;
+	title: string;
+	activeColor: string;
+	hoverColor: string;
+	strokeWidth?: number;
+	iconClass?: string;
+}
+
+const STATUS_BUTTONS: StatusButtonConfig[] = [
+	{
+		status: "pending",
+		icon: Bell,
+		title: "Pendiente",
+		activeColor: "bg-blue-500 hover:bg-blue-600",
+		hoverColor: "hover:bg-slate-50 hover:text-slate-600",
+		strokeWidth: 2.5,
+		iconClass: "size-6",
+	},
+	{
+		status: "waiting",
+		icon: Users,
+		title: "Esperando",
+		activeColor: "bg-amber-500 hover:bg-amber-600",
+		hoverColor: "hover:bg-slate-50 hover:text-slate-600",
+		strokeWidth: 2.5,
+		iconClass: "size-6",
+	},
+	{
+		status: "served",
+		icon: CircleCheck,
+		title: "Atendida",
+		activeColor: "bg-emerald-500 hover:bg-emerald-600",
+		hoverColor: "hover:bg-slate-50 hover:text-slate-600",
+		strokeWidth: 3,
+		iconClass: "size-6",
+	},
+	{
+		status: "code3",
+		icon: ReceiptEuro,
+		title: "Codigo 3",
+		activeColor: "bg-red-500 hover:bg-red-600",
+		hoverColor: "hover:bg-slate-50 hover:text-slate-600",
+		strokeWidth: 2.5,
+		iconClass: "size-7",
+	},
+];
+
 interface SidebarProps {
 	onToggleView?: () => void;
 	showToggle?: boolean;
 	isOnSidebar?: boolean;
 }
 
-const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const NUMBER_BUTTONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export function Sidebar({
 	onToggleView,
@@ -124,67 +174,36 @@ export function Sidebar({
 					mode === "cola" && "invisible",
 				)}
 			>
-				<Button
-					type="button"
-					variant="outline"
-					onClick={() => setSelectedStatus("pending")}
-					className={cn(
-						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
-						selectedStatus === "pending"
-							? "bg-blue-500 text-white border-transparent hover:bg-blue-600 hover:text-white"
-							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
-					)}
-					title="Pendiente"
-				>
-					<Bell size={24} className="size-6" strokeWidth={2.5} />
-				</Button>
-				<Button
-					type="button"
-					variant="outline"
-					onClick={() => setSelectedStatus("waiting")}
-					className={cn(
-						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
-						selectedStatus === "waiting"
-							? "bg-amber-500 text-white border-transparent hover:bg-amber-600 hover:text-white"
-							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
-					)}
-					title="Esperando"
-				>
-					<Users size={24} className="size-6" strokeWidth={2.5} />
-				</Button>
-				<Button
-					type="button"
-					variant="outline"
-					onClick={() => setSelectedStatus("served")}
-					className={cn(
-						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
-						selectedStatus === "served"
-							? "bg-emerald-500 text-white border-transparent hover:bg-emerald-600 hover:text-white"
-							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
-					)}
-					title="Atendida"
-				>
-					<CircleCheck size={24} className="size-6" strokeWidth={3} />
-				</Button>
-				<Button
-					type="button"
-					variant="outline"
-					onClick={() => setSelectedStatus("code3")}
-					className={cn(
-						"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
-						selectedStatus === "code3"
-							? "bg-red-500 text-white border-transparent hover:bg-red-600 hover:text-white"
-							: "text-slate-400 border-slate-200 hover:bg-slate-50 hover:text-slate-600",
-					)}
-					title="Código 3"
-				>
-					<ReceiptEuro size={24} className="size-7" strokeWidth={2.5} />
-				</Button>
+				{STATUS_BUTTONS.map((config) => {
+					const Icon = config.icon;
+					const isActive = selectedStatus === config.status;
+					return (
+						<Button
+							key={config.status}
+							type="button"
+							variant="outline"
+							onClick={() => setSelectedStatus(config.status)}
+							className={cn(
+								"flex-1 h-auto py-5 border rounded-xl transition-all flex items-center justify-center",
+								isActive
+									? `${config.activeColor} text-white border-transparent hover:text-white`
+									: `text-slate-400 border-slate-200 ${config.hoverColor}`,
+							)}
+							title={config.title}
+						>
+							<Icon
+								size={24}
+								className={config.iconClass}
+								strokeWidth={config.strokeWidth}
+							/>
+						</Button>
+					);
+				})}
 			</div>
 
 			{/* Keypad */}
 			<div className="grid grid-cols-3 gap-3 mb-4">
-				{numberButtons.map((num) => (
+				{NUMBER_BUTTONS.map((num) => (
 					<Button
 						type="button"
 						key={num}
