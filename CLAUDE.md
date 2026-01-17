@@ -124,3 +124,7 @@ Update relevant LOGIC.md or CHANGELOG.md when modifying features.
 - **Strict TypeScript**: No `any` types
 - **Mobile-first**: All layouts must work on small screens
 - Extract heavy state/effects into `hooks/use-*.ts` files
+
+## Agent Skills
+
+- **React Best Practices**: See `docs/skills/REACT_BEST_PRACTICES.md` for 45 performance optimization rules from Vercel Engineering. Reference when writing/reviewing React components, data fetching, or optimizing bundle size.
