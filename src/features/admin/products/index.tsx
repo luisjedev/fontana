@@ -117,7 +117,7 @@ export function ProductsView() {
 					</div>
 
 					<Select value={selectedCategory} onValueChange={setSelectedCategory}>
-						<SelectTrigger className="w-[200px] bg-white">
+						<SelectTrigger className="w-50 bg-white">
 							<SelectValue placeholder="Categoría" />
 						</SelectTrigger>
 						<SelectContent>
@@ -131,7 +131,7 @@ export function ProductsView() {
 					</Select>
 
 					<Select value={selectedType} onValueChange={setSelectedType}>
-						<SelectTrigger className="w-[180px] bg-white">
+						<SelectTrigger className="w-45 bg-white">
 							<SelectValue placeholder="Tipo" />
 						</SelectTrigger>
 						<SelectContent>
