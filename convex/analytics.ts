@@ -9,17 +9,23 @@ export const getTodayMetrics = query({
   handler: async (ctx) => {
     const today = getTodayDateString()
 
-    // 1. Fetch Daily Queue Metrics
-    const queueMetric = await ctx.db
+    const queueMetricPromise = ctx.db
       .query('metrics_daily_queue')
       .withIndex('by_day', (q) => q.eq('day', today))
       .first()
 
-    // 2. Fetch Table Metrics for today
-    const tableMetrics = await ctx.db
+    const tableMetricsPromise = ctx.db
       .query('metrics_tables')
       .withIndex('by_day', (q) => q.eq('day', today))
       .collect()
+
+    const activeSessionsPromise = ctx.db.query("authSessions").collect()
+
+    const [queueMetric, tableMetrics, activeSessions] = await Promise.all([
+      queueMetricPromise,
+      tableMetricsPromise,
+      activeSessionsPromise,
+    ])
 
     // --- Calculations ---
 
@@ -31,6 +37,7 @@ export const getTodayMetrics = query({
     let totalWaitingDuration = 0
     let waitingCount = 0
     let totalDurationSum = 0
+    let totalServedDuration = 0
 
     for (const m of tableMetrics) {
       if (m.pendingDuration) {
@@ -48,6 +55,12 @@ export const getTodayMetrics = query({
       if (m.duration) {
         totalDurationSum += m.duration
       }
+
+      const p = m.pendingDuration || 0
+      const w = m.waitingDuration || 0
+      const pay = m.paymentDuration || 0
+      const d = m.duration || 0
+      totalServedDuration += Math.max(0, d - (p + w + pay))
     }
 
     const avgServiceTime =
@@ -64,20 +77,7 @@ export const getTodayMetrics = query({
     const avgTotalDuration = 
       tableMetrics.length > 0 ? Math.round(totalDurationSum / tableMetrics.length) : 0
 
-    // Served Duration = Total - (Pending + Waiting + Payment)
-    // We calculate this per table to be accurate, or we can approximate with averages. 
-    // Per table is better.
-    let totalServedDuration = 0;
-    for (const m of tableMetrics) {
-        const p = m.pendingDuration || 0;
-        const w = m.waitingDuration || 0;
-        const pay = m.paymentDuration || 0;
-        const d = m.duration || 0;
-        // Served can't be negative
-        const served = Math.max(0, d - (p + w + pay));
-        totalServedDuration += served;
-    }
-    const avgServedDuration = tableMetrics.length > 0 ? Math.round(totalServedDuration / tableMetrics.length) : 0;
+    const avgServedDuration = tableMetrics.length > 0 ? Math.round(totalServedDuration / tableMetrics.length) : 0
 
 
     // B. Queue Conversion
@@ -95,7 +95,6 @@ export const getTodayMetrics = query({
     const avgQueueWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
 
     // E. Active Sessions
-    const activeSessions = await ctx.db.query("authSessions").collect();
     const validSessions = activeSessions.filter(
         (s) => s.expirationTime > Date.now()
     ).length;

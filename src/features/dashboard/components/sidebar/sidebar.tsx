@@ -246,7 +246,7 @@ export function Sidebar({
 			</div>
 
 			{/* Confirm Button */}
-			<div className="">
+			<div>
 				<Button
 					type="button"
 					onClick={handleConfirm}

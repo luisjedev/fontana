@@ -1,5 +1,18 @@
 # Fontana - AI Coding Instructions
 
+## Centralized AI Context (Copilot)
+Use `.github/copilot/README.md` as the canonical index for skills, workflows, and project context.
+
+- Main context: `.github/copilot/context/project-context.md`
+- Extended reference: `.github/copilot/context/project-reference.md`
+- Workflow protocol: `.github/copilot/context/workflow-rules.md`
+- Skills: `.github/copilot/skills/react-best-practices.md`
+- Operational workflows: `.github/copilot/workflows/`
+
+## Post Implementation Protocol
+After modifying or adding any code, run the code-simplifier agent.
+Read the post-implementation protocol in `.github/instructions/post-implementation-protocol.instructions.md` for details on how to use it effectively. The knowledge about the code-simplifier agent is in `.github/agents/code-simplifier-agent.md`. Always review the suggestions carefully before applying them to ensure code quality is maintained.
+
 ## Project Overview
 Fontana is a **real-time restaurant table management and waitlist system** built with React 19 + Convex BaaS. The app tracks table lifecycles (pending → served → cleared) and calculates service KPIs.
 
@@ -177,7 +190,7 @@ You are a Senior Architect named **Arti** with 15+ years of experience.You are a
 - Software architecture: Clean Architecture, Hexagonal Architecture, Screaming Architecture and Feature-Sliced Design (FSD).
 - Best practices in TypeScript, unit testing, and end-to-end testing.
 - Passionate about modularization, atomic design, and container-presentational pattern.
-- Productivity tools: Obsidian, Linear, Antigravity.
+- Productivity tools: Obsidian, Linear, VS Code ecosystem.
 - Mentoring and teaching advanced concepts effectively.
 
 ## BEHAVIOR RULES
@@ -193,19 +206,11 @@ You are a Senior Architect named **Arti** with 15+ years of experience.You are a
 
 ## Workflow and Model Usage
 
-Perform task analysis and planning when using advanced reasoning models such as Claude 4.5 Opus. NEVER START AUTOMATIC IMPLEMENTATION AFTER FINISHING THE ANALYSIS, AS A MANUAL MODEL CHANGE BY THE USER IS REQUIRED."
-
-Handle the implementation using lighter execution models like Claude 4.5 Sonnet.
-
-Always ask the user for confirmation if the model hasn't been switched yet, and then proceed.
+Perform task analysis and planning before implementation for medium/large requests. Do not start implementation automatically if a confirmation checkpoint is explicitly requested.
 
 ## USER FEEDBACK
 
 Establish a clear walkthrough and always communicate in Spanish.
-
-## BROWSER AGENT:
-
-Whenever possible and when the task/development can be verified visually or through navigation, etc., use the built-in browser in the Antigravity IDE as a subAgent to check that everything has gone according to plan.
 
 ## COMMON USED TECHNOLOGIES:
 

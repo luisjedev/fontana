@@ -1,6 +1,5 @@
 import { cn } from "@/shared/lib/utils";
-
-type TableStatus = "pending" | "waiting" | "code3" | "free" | "served";
+import type { TableStatus } from "@/shared/types";
 
 interface StatusStyle {
 	ring: string;
@@ -28,12 +27,6 @@ const STATUS_STYLES: Record<TableStatus, StatusStyle> = {
 		number: "text-slate-800",
 		footer: "text-slate-500",
 	},
-	free: {
-		ring: "border-emerald-500",
-		bg: "bg-white",
-		number: "text-slate-800",
-		footer: "text-emerald-500 font-bold",
-	},
 	served: {
 		ring: "border-[#8B5E3C]",
 		bg: "bg-[#8B5E3C]",
@@ -46,7 +39,6 @@ interface TableCircleProps {
 	number: number;
 	status: TableStatus;
 	time?: string;
-	badge?: number;
 	onClick?: () => void;
 	isWarning?: boolean;
 }
@@ -55,7 +47,6 @@ export function TableCircle({
 	number,
 	status,
 	time,
-	badge,
 	onClick,
 	isWarning,
 }: TableCircleProps) {
@@ -80,17 +71,9 @@ export function TableCircle({
 						{number}
 					</span>
 				</div>
-
-				{badge && (
-					<div className="absolute -top-1 -right-1 w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-						<span className="text-xs font-bold text-white">{badge}</span>
-					</div>
-				)}
 			</div>
 
-			<span className={cn("text-lg font-medium", footerColor)}>
-				{time || (status === "free" && "")}
-			</span>
+			<span className={cn("text-lg font-medium", footerColor)}>{time}</span>
 		</button>
 	);
 }
