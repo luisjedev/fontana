@@ -1,0 +1,11 @@
+{
+	"hooks": {
+		"Stop": [
+			{
+				"type": "command",
+				"command": "pnpm check --write",
+				"description": "Run biome check with --write to automatically fix issues and format code."
+			}
+		]
+	}
+}
