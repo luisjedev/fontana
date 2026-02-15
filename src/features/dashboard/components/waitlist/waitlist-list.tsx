@@ -27,7 +27,7 @@ export function WaitlistList({ items, onSelect }: WaitlistListProps) {
 							type="button"
 							key={item._id}
 							onClick={() => onSelect(item)}
-							className="shrink-0 flex items-center bg-white rounded-2xl p-4 shadow-md border border-slate-200 min-w-[160px] justify-between h-12 hover:bg-red-50 transition-colors group cursor-pointer"
+							className="shrink-0 flex items-center bg-white rounded-2xl p-4 shadow-md border border-slate-200 min-w-40 justify-between h-12 hover:bg-red-50 transition-colors group cursor-pointer"
 						>
 							<span className="flex items-center gap-2 font-bold text-slate-800 text-2xl group-hover:text-red-600 transition-colors">
 								{item.people}
