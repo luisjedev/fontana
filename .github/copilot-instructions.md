@@ -1,5 +1,14 @@
 # Fontana - AI Coding Instructions
 
+## Centralized AI Context (Copilot)
+Use `.github/copilot/README.md` as the canonical index for skills, workflows, and project context.
+
+- Main context: `.github/copilot/context/project-context.md`
+- Extended reference: `.github/copilot/context/project-reference.md`
+- Workflow protocol: `.github/copilot/context/workflow-rules.md`
+- Skills: `.github/copilot/skills/react-best-practices.md`
+- Operational workflows: `.github/copilot/workflows/`
+
 ## Project Overview
 Fontana is a **real-time restaurant table management and waitlist system** built with React 19 + Convex BaaS. The app tracks table lifecycles (pending → served → cleared) and calculates service KPIs.
 

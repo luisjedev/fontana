@@ -84,4 +84,4 @@ El proyecto sigue una **Screaming Architecture** organizada por **Features**:
 
 `src/features/` contiene la lógica específica del dominio (ej. `dashboard`, `tables`), mientras que `src/shared/` contiene componentes reutilizables y utilidades.
 
-Para detalles completos de arquitectura, ver `.agent/rules/global-context.md`.
+Para detalles completos de arquitectura y contexto operativo de IA, ver `.github/copilot/context/project-context.md`.

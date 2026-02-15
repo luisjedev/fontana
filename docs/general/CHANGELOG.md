@@ -18,6 +18,7 @@ For detailed feature-specific changes, see the respective feature changelogs.
 *   **Refactor**: Migrated component structure to specific `src/features/` modules (Screaming Architecture).
 *   **Table Logic**: updated timer logic for "Served" tables to better track service cycles.
 *   **UI/UX**: Standardized List/Grid layouts across Admin features (Ingredients, Categories).
+*   **AI Documentation**: Centralized skills, contexts, and agent workflows into `.github/copilot/` as the single Copilot-first hub.
 
 ## [2026-01-01] - Auth & Routing
 ### Added

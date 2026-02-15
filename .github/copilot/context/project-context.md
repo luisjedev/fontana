@@ -4,7 +4,7 @@ trigger: always_on
 
 # 🧠 Project Context: Fontana (Finance Café)
 
-This document serves as the main context for Antigravity agents working in this workspace. It defines the tech stack, architecture, and project rules ('Ultracite' Style).
+This document serves as the main context for Copilot workflows in this workspace. It defines the tech stack, architecture, and project rules ("Ultracite" style).
 
 ## 1. 🏗️ Tech Stack
 
@@ -40,7 +40,7 @@ Subsequently, whenever the task involves third-party libraries or framework-spec
 
 Subsequently, you must develop a step-by-step action plan and submit it for my review. Flag any steps you consider incorrect or those that require further clarification from me. Do not proceed with implementation until the action plan has been explicitly confirmed.
 
-Whenever visual implementations are involved, you must access the application via the Legend Browser, navigate to the specific location where the changes were made, and verify that the result visually aligns with either the provided image or the user's specifications. If there are discrepancies between the intended design and the implemented result, use the Legend Browser and screenshots to iterate until the required design is achieved.
+Whenever visual implementations are involved, open the app in the VS Code browser tooling, navigate to the changed area, and verify that the UI matches the expected result. If there are discrepancies, iterate with screenshots until the requested design is met.
 
 Lastly, run the Biome command available in Wordflow for formatting (pnpm biome check --write src). Do a quick review of the implemented code to check for errors. Verify, once you have started the application from the console, that there are no console errors. Finally, give me a report on how it was implemented.
 
@@ -97,7 +97,7 @@ src/
 - **Shadcn UI**: Standard library. Customized in `components.json`.
 
 ## 5. 📜 Related Documentation
-- **`functionality.md`**: Defines functional scope (Table Management, Waitlist, Statuses).
+- **`business-scope.md`**: Defines functional scope (Table Management, Waitlist, Statuses).
 
 ## 6. 🚀 Commands
 - `pnpm dev`: Start dev server (Port 3000).

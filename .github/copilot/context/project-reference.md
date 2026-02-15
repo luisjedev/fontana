@@ -1,6 +1,6 @@
-# CLAUDE.md
+# Project Reference
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Expanded technical reference for AI coding agents working in this repository.
 
 ## Project Overview
 
@@ -98,7 +98,7 @@ export const create = mutation({
 - System fields `_id` and `_creationTime` are automatic (never add them manually)
 - Use `v.id("tableName")` for foreign key references
 - Add `.index()` for frequently queried fields
-- See `.cursorrules` for complete validator reference
+- See `.github/copilot/context/convex-schema-reference.md` for complete validator reference
 
 ## Data Flow: Table Lifecycle
 
@@ -127,4 +127,4 @@ Update relevant LOGIC.md or CHANGELOG.md when modifying features.
 
 ## Agent Skills
 
-- **React Best Practices**: See `docs/skills/REACT_BEST_PRACTICES.md` for 45 performance optimization rules from Vercel Engineering. Reference when writing/reviewing React components, data fetching, or optimizing bundle size.
+- **React Best Practices**: See `.github/copilot/skills/react-best-practices.md` for 45 performance optimization rules from Vercel Engineering. Reference when writing/reviewing React components, data fetching, or optimizing bundle size.
