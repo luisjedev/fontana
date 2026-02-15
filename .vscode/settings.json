@@ -32,5 +32,11 @@
 	"editor.codeActionsOnSave": {
 		"source.organizeImports.biome": "explicit"
 	},
-	"css.lint.unknownAtRules": "ignore"
+	"css.lint.unknownAtRules": "ignore",
+	"chat.tools.terminal.autoApprove": {
+		"/^printf 'Y\\\\n' \\| npx convex deploy$/": {
+			"approve": true,
+			"matchCommandLine": true
+		}
+	}
 }
