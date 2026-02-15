@@ -9,6 +9,10 @@ Use `.github/copilot/README.md` as the canonical index for skills, workflows, an
 - Skills: `.github/copilot/skills/react-best-practices.md`
 - Operational workflows: `.github/copilot/workflows/`
 
+## Post Implementation Protocol
+After modifying or adding any code, run the code-simplifier agent.
+Read the post-implementation protocol in `.github/instructions/post-implementation-protocol.instructions.md` for details on how to use it effectively. The knowledge about the code-simplifier agent is in `.github/agents/code-simplifier-agent.md`. Always review the suggestions carefully before applying them to ensure code quality is maintained.
+
 ## Project Overview
 Fontana is a **real-time restaurant table management and waitlist system** built with React 19 + Convex BaaS. The app tracks table lifecycles (pending → served → cleared) and calculates service KPIs.
 
