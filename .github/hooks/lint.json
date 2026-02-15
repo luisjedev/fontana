@@ -3,8 +3,8 @@
 		"Stop": [
 			{
 				"type": "command",
-				"command": "pnpm check --write",
-				"description": "Run biome check with --write to automatically fix issues and format code."
+				"command": "pnpm check",
+				"description": "Run biome check to automatically fix issues and format code."
 			}
 		]
 	}
