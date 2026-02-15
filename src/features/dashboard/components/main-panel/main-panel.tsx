@@ -17,7 +17,6 @@ interface MainPanelProps {
 }
 
 export function MainPanel({ tables: tablesData, waitlist }: MainPanelProps) {
-	// const tablesData = useQuery(api.tables.list); // Removed
 	const updateTable = useMutation(api.tables.upsert);
 	const removeTable = useMutation(api.tables.remove);
 

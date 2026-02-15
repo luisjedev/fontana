@@ -69,7 +69,7 @@ export const remove = mutation({
 
       if (dailyMetric) {
         const waitDuration = Math.round((Date.now() - item._creationTime) / 1000)
-        let updates: any = {
+        const updates: Record<string, number | undefined> = {
           totalWaitDuration: (dailyMetric.totalWaitDuration ?? 0) + waitDuration
         }
 
@@ -81,8 +81,6 @@ export const remove = mutation({
           updates.abandonedGroups = (dailyMetric.abandonedGroups || 0) + 1
         }
         await ctx.db.patch(dailyMetric._id, updates)
-      } else {
-         // Should exist if queue was active
       }
     }
 
