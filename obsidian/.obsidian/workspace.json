@@ -11,14 +11,10 @@
             "id": "b8a5b6e82bf35895",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Home.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Home"
+              "title": "Nueva pestaña"
             }
           }
         ]
@@ -183,10 +179,12 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "b8a5b6e82bf35895",
+  "active": "5f81f59f0e7d4e4d",
   "lastOpenFiles": [
-    "Backend/Data_Schema.md",
+    "Sin título.base",
+    "Sin título 1.base",
     "Home.md",
+    "Backend/Data_Schema.md",
     "Technology/Tech_Stack.md",
     "Business_Logic/Core_Concepts.md",
     "Backend/Functions.md",
