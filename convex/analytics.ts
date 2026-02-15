@@ -9,17 +9,23 @@ export const getTodayMetrics = query({
   handler: async (ctx) => {
     const today = getTodayDateString()
 
-    // 1. Fetch Daily Queue Metrics
-    const queueMetric = await ctx.db
+    const queueMetricPromise = ctx.db
       .query('metrics_daily_queue')
       .withIndex('by_day', (q) => q.eq('day', today))
       .first()
 
-    // 2. Fetch Table Metrics for today
-    const tableMetrics = await ctx.db
+    const tableMetricsPromise = ctx.db
       .query('metrics_tables')
       .withIndex('by_day', (q) => q.eq('day', today))
       .collect()
+
+    const activeSessionsPromise = ctx.db.query("authSessions").collect()
+
+    const [queueMetric, tableMetrics, activeSessions] = await Promise.all([
+      queueMetricPromise,
+      tableMetricsPromise,
+      activeSessionsPromise,
+    ])
 
     // --- Calculations ---
 
@@ -95,7 +101,6 @@ export const getTodayMetrics = query({
     const avgQueueWaitTime = totalGroups > 0 ? Math.round(totalWaitDuration / totalGroups) : 0
 
     // E. Active Sessions
-    const activeSessions = await ctx.db.query("authSessions").collect();
     const validSessions = activeSessions.filter(
         (s) => s.expirationTime > Date.now()
     ).length;
