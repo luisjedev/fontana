@@ -90,7 +90,7 @@ export default defineSchema(
 );
 ```
 
-Sourced from: https://github.com/PatrickJS/awesome-cursorrules/blob/main/rules/convex-cursorrules-prompt-file/.cursorrules
+Sourced from a community Convex schema prompt reference repository.
 # shadcn instructions
 
 Use the latest version of Shadcn to install new components, like this command to add a button component:

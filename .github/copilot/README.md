@@ -18,13 +18,4 @@ Single source of truth for AI operational context in VS Code + Copilot.
   - `format-biome.md`: Formatting/lint command.
   - `deploy-prod.md`: Production deployment flow.
 
-## Migration Notes
-
-- Legacy sources moved into this hub:
-  - `.agent/rules/*` → `context/*`
-  - `.agent/workflows/*` → `workflows/*`
-  - `docs/skills/REACT_BEST_PRACTICES.md` → `skills/react-best-practices.md`
-  - `CLAUDE.md` → `context/project-reference.md`
-  - `.cursorrules` → `context/convex-schema-reference.md`
-
 Use this folder as the canonical entry point for AI instructions and context.
